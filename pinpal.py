@@ -96,25 +96,23 @@ class Memorization:
         if remaining > 0:
             print("next reminder for", repr(self.label), "in", int(remaining), "seconds")
             return False
-        userInput = getpass(f"\n\n\n{self.label} (reminder: {self.string()}) + : ")
+        userInput = getpass(f"\n\n\n{self.label} (reminder: {self.string()}): ")
         timestamp = time()
         correct = kdf(salt=self.salt, password=userInput.encode("utf-8")) == self.key
         self.entryTimes.append((timestamp, correct))
         if correct:
-            self.successCount += 1
-            print("Yay, password correct", self.successCount, "times")
             SUCCESS_THRESHOLD = 5
+            self.successCount += 1
+            print(f"✅ Yay, correct {self.successCount}/{SUCCESS_THRESHOLD} times")
             if self.successCount >= SUCCESS_THRESHOLD and self.remainingTokens:
                 self.tokensMemorized += 1
                 self.remainingTokens.pop(-1)
-                print("dropping a token!")
+                print("🎉 Level Up! 🎊")
                 self.successCount = 0
-            else:
-                print("keep it up!")
             return True
         else:
             self.successCount = 0
-            print("Oops, try again")
+            print("❌ Oops, try again")
             return False
 
     def tojson(self) -> dict[str, object]:
