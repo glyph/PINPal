@@ -93,9 +93,9 @@ class Memorization:
     def prompt(self) -> bool:
         remaining = self.nextPromptTime() - time()
         if remaining > 0:
-            print("Try again in", remaining, "seconds")
+            print("Try again in", int(remaining), "seconds")
             return False
-        print("Complete the PIN")
+        print("Complete the PIN for " + repr(self.label))
         userInput = getpass('"' + self.string() + '": ')
         timestamp = time()
         correct = kdf(salt=self.salt, password=userInput.encode("utf-8")) == self.key
@@ -196,7 +196,7 @@ if __name__ == "__main__":
             with open(timecache) as f:
                 needsCheckAt = float(f.read())
             if needsCheckAt < time():
-                stdout.write('📌')
+                stdout.write(' 📌 Time To Run PinPal 📌')
         exit(0)
 
     if len(argv) > 1 and argv[1] == 'clear':
