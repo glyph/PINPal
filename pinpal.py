@@ -96,8 +96,7 @@ class Memorization:
         if remaining > 0:
             print("next reminder for", repr(self.label), "in", int(remaining), "seconds")
             return False
-        print("Complete the PIN for " + repr(self.label))
-        userInput = getpass(self.string() + ": ")
+        userInput = getpass(f"\n\n\n{self.label} (reminder: {self.string()}) + : ")
         timestamp = time()
         correct = kdf(salt=self.salt, password=userInput.encode("utf-8")) == self.key
         self.entryTimes.append((timestamp, correct))
