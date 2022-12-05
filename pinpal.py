@@ -93,7 +93,7 @@ class Memorization:
     def prompt(self) -> bool:
         remaining = self.nextPromptTime() - time()
         if remaining > 0:
-            print("Try again in", int(remaining), "seconds")
+            print("next reminder for", repr(self.label), "in", int(remaining), "seconds")
             return False
         print("Complete the PIN for " + repr(self.label))
         userInput = getpass('"' + self.string() + '": ')
