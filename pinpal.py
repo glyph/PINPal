@@ -84,11 +84,12 @@ class Memorization:
         )
 
     def string(self) -> str:
+        groupSeparator = "/"
         placeholderChar = "•"
         placeholder: str = placeholderChar * 4 if self.separator else placeholderChar
-        return self.separator.join(
-            self.remainingTokens + (self.tokensMemorized * [placeholder])
-        )
+        allTokens = self.remainingTokens + (self.tokensMemorized * [placeholder])
+        allTokens.insert((len(self.remainingTokens) + self.tokensMemorized)//2, groupSeparator)
+        return self.separator.join(allTokens)
 
     def prompt(self) -> bool:
         remaining = self.nextPromptTime() - time()
@@ -96,7 +97,7 @@ class Memorization:
             print("next reminder for", repr(self.label), "in", int(remaining), "seconds")
             return False
         print("Complete the PIN for " + repr(self.label))
-        userInput = getpass('"' + self.string() + '": ')
+        userInput = getpass(self.string() + ": ")
         timestamp = time()
         correct = kdf(salt=self.salt, password=userInput.encode("utf-8")) == self.key
         self.entryTimes.append((timestamp, correct))
@@ -104,7 +105,7 @@ class Memorization:
             self.successCount += 1
             print("Yay, password correct", self.successCount, "times")
             SUCCESS_THRESHOLD = 5
-            if self.successCount >= SUCCESS_THRESHOLD:
+            if self.successCount >= SUCCESS_THRESHOLD and self.remainingTokens:
                 self.tokensMemorized += 1
                 self.remainingTokens.pop(-1)
                 print("dropping a token!")
