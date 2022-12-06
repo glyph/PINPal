@@ -15,7 +15,7 @@ from os import urandom
 from os.path import expanduser, exists
 from time import time
 from typing import Sequence, Any
-from keyring import get_password, set_password
+from keyring import get_password, set_password  # type: ignore[import]
 from json import dumps, loads
 
 r = SystemRandom()
@@ -71,7 +71,11 @@ class Memorization:
 
     @classmethod
     def new(
-        cls, label: str, tokens: Sequence[str] = "1234567890", length: int = 6, separator: str = ""
+        cls,
+        label: str,
+        tokens: Sequence[str] = "1234567890",
+        length: int = 6,
+        separator: str = "",
     ) -> Memorization:
         """
         create a new password to memorize
@@ -95,13 +99,17 @@ class Memorization:
         placeholderChar = "•"
         placeholder: str = placeholderChar * 4 if self.separator else placeholderChar
         allTokens = self.remainingTokens + (self.tokensMemorized * [placeholder])
-        allTokens.insert((len(self.remainingTokens) + self.tokensMemorized)//2, groupSeparator)
+        allTokens.insert(
+            (len(self.remainingTokens) + self.tokensMemorized) // 2, groupSeparator
+        )
         return self.separator.join(allTokens)
 
     def prompt(self) -> bool:
         remaining = self.nextPromptTime() - time()
         if remaining > 0:
-            print("next reminder for", repr(self.label), "in", int(remaining), "seconds")
+            print(
+                "next reminder for", repr(self.label), "in", int(remaining), "seconds"
+            )
             return False
         userInput = getpass(f"\n\n\n{self.label} (reminder: {self.string()}): ")
         timestamp = time()
@@ -143,14 +151,14 @@ class Memorization:
         convert from json-serializable dict
         """
         return Memorization(
-            label=data['label'],
-            remainingTokens=data['remainingTokens'],
-            tokensMemorized=data['tokensMemorized'],
-            successCount=data['successCount'],
-            separator=data['separator'],
-            salt=bytes.fromhex(data['salt']),
-            key=bytes.fromhex(data['key']),
-            entryTimes=data['entryTimes'],
+            label=data["label"],
+            remainingTokens=data["remainingTokens"],
+            tokensMemorized=data["tokensMemorized"],
+            successCount=data["successCount"],
+            separator=data["separator"],
+            salt=bytes.fromhex(data["salt"]),
+            key=bytes.fromhex(data["key"]),
+            entryTimes=data["entryTimes"],
         )
 
     def nextPromptTime(self) -> float:
@@ -165,10 +173,11 @@ class Memorization:
             return time()
         # need to delay. want to memorize a password in around 3 days or so. 6
         # digits, 5 correct guesses per digit necessary.  30 guesses minimum.
-        return (timestamp + (90 * (2 ** self.successCount)))
+        return timestamp + (90 * (2**self.successCount))
 
 
 timecache = expanduser("~/.pinpal-timestamp")
+
 
 @dataclass
 class PinPalApp:
@@ -179,8 +188,16 @@ class PinPalApp:
         Write it all out to somewhere persistent.
         """
         with open(timecache, "w") as f:
-            f.write(str(min([each.nextPromptTime() for each in self.memorizations]) if self.memorizations else 0))
-        set_password("pinpal", "storage", dumps([each.tojson() for each in self.memorizations]))
+            f.write(
+                str(
+                    min([each.nextPromptTime() for each in self.memorizations])
+                    if self.memorizations
+                    else 0
+                )
+            )
+        set_password(
+            "pinpal", "storage", dumps([each.tojson() for each in self.memorizations])
+        )
 
     @classmethod
     def load(cls) -> PinPalApp | None:
@@ -199,22 +216,23 @@ def main() -> None:
     Run the tool.
     """
     from sys import argv, exit, stdout
-    if len(argv) > 1 and argv[1] == 'check':
+
+    if len(argv) > 1 and argv[1] == "check":
         if exists(timecache):
             with open(timecache) as f:
                 needsCheckAt = float(f.read())
             if needsCheckAt < time():
-                stdout.write(' 📌 Time To Run PinPal 📌')
+                stdout.write(" 📌 Time To Run PinPal 📌")
         exit(0)
 
-    if len(argv) > 1 and argv[1] == 'clear':
+    if len(argv) > 1 and argv[1] == "clear":
         app: PinPalApp | None = PinPalApp([])
     else:
         app = PinPalApp.load()
         if app is None:
             app = PinPalApp([])
     assert app is not None
-    if len(argv) > 1 and argv[1] == 'new':
+    if len(argv) > 1 and argv[1] == "new":
         newLabel = input("What do you want to call this new PIN?")
         m = Memorization.new(newLabel)
         app.memorizations.append(m)
@@ -222,6 +240,7 @@ def main() -> None:
         for each in app.memorizations:
             each.prompt()
     app.save()
+
 
 if __name__ == "__main__":
     main()
