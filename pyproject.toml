@@ -8,6 +8,9 @@ authors = [{name = "Glyph", email = "glyph@glyph.im"}]
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
 dynamic = ["version", "description"]
+dependencies = [
+    "keyring",
+]
 
 [project.urls]
 Home = "https://glyph.im/pinpal/"

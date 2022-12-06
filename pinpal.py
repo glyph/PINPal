@@ -1,4 +1,11 @@
+"""
+PINPal: a tool for helping you memorize PINs
+"""
+
+
 from __future__ import annotations
+
+__version__ = "0.0.1"
 
 from dataclasses import dataclass
 from getpass import getpass
@@ -187,7 +194,10 @@ class PinPalApp:
         return self
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """
+    Run the tool.
+    """
     from sys import argv, exit, stdout
     if len(argv) > 1 and argv[1] == 'check':
         if exists(timecache):
@@ -212,3 +222,6 @@ if __name__ == "__main__":
         for each in app.memorizations:
             each.prompt()
     app.save()
+
+if __name__ == "__main__":
+    main()
