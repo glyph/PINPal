@@ -34,3 +34,25 @@ password as you make progress in memorizing it.
 
 ### Usage
 
+To start memorizing a new secret,
+
+```console
+$ pinpal new
+```
+
+and you'll be prompted to label the new secret.
+
+To check up on your secrets and get prompted to recite them, simply run
+
+```console
+$ pinpal
+```
+
+You will want to add
+
+```sh
+pinpal check
+```
+
+to something that is run frequently. I have it in my shell prompt.  This will
+tell you when you need to run `pinpal`.
