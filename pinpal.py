@@ -19,14 +19,100 @@ from time import time
 from typing import Any, Callable, Sequence
 
 from keyring import get_password, set_password
+import os
+from hashlib import scrypt
+from typing import TypedDict
 
 
-r = SystemRandom()
+@dataclass
+class SCryptParameters:
+    """
+    Keyword parameters for L{scrypt}.
+    """
+
+    r: int
+    p: int
+    n: int
+    maxmem: int
+
+    def kdf(self, *, salt: bytes, password: bytes) -> bytes:
+        return scrypt(
+            password, salt=salt, r=self.r, p=self.p, n=self.n, maxmem=self.maxmem
+        )
+
+    @classmethod
+    def fromjson(cls, json: dict[str, str]) -> SCryptParameters:
+        """
+        Load SCrypt parameters from some serialized JSON objects.
+        """
+        return cls(
+            r=int(json["r"]),
+            p=int(json["p"]),
+            n=int(json["n"]),
+            maxmem=int(json["maxmem"]),
+        )
+
+    def tojson(self) -> dict[str, str]:
+        """
+        Convert SCrypt parameters to JSON.
+        """
+        return {
+            "r": str(self.r),
+            "p": str(self.p),
+            "n": str(self.n),
+            "maxmem": str(self.maxmem),
+        }
 
 
-def kdf(*, salt: bytes, password: bytes) -> bytes:
-    "scrypt with good defaults"
-    return scrypt(password, salt=salt, n=0x4000, r=8, p=1)
+determined: SCryptParameters | None = None
+
+
+def determineScryptParameters(times: int = 10) -> SCryptParameters:
+    """
+    Determine an ideal value for `n` and `maxmem`, per U{this comment,
+    <https://go-review.googlesource.com/c/crypto/+/67070/3/scrypt/scrypt.go#223>}
+
+    'consider setting N to the highest power of 2 you can derive within 100
+    milliseconds'
+    """
+    global determined
+    if determined is not None:
+        return determined
+    salt = os.urandom(16)
+    password = os.urandom(16)
+    r = 8
+    p = 1
+    nPower = 13
+    n = 1 << nPower
+
+    while True:
+        then = time()
+        previousN = n
+        n = 1 << nPower
+        # documented in Node, but not Python, apparently: “It is an error when
+        # (approximately) 128 * N * r > maxmem. Default: 32 * 1024 * 1024.”
+        # https://nodejs.org/api/crypto.html#cryptoscryptsyncpassword-salt-keylen-options
+        maxmem = 128 * n * r * 2
+        # '* 2' added on the end here because we stil seem to bump into memory
+        # issues when set to exactly 128*n*r
+        for _ in range(times):
+            scrypt(salt=salt, password=password, r=r, p=p, n=n, maxmem=maxmem)
+
+        now = time()
+        if ((now - then) / times) > 0.1:
+            determined = SCryptParameters(r=r, p=p, n=previousN, maxmem=maxmem)
+            return determined
+        nPower += 1
+
+
+random = SystemRandom()
+
+oldDefaultScryptParams = {
+    "n": str(0x4000),
+    "r": str(8),
+    "p": str(1),
+    "maxmem": str(64 * 1024 * 1024),
+}
 
 
 class TokenType(Enum):
@@ -157,6 +243,11 @@ class Memorization2:
     The maximum number of tokens we can have stored.
     """
 
+    kdf: SCryptParameters
+    """
+    The parameters for the KDF.
+    """
+
     def tojson(self) -> dict[str, object]:
         """
         convert to json-serializable dict
@@ -171,6 +262,7 @@ class Memorization2:
             "tokenType": self.tokenType.value,
             "guesses": [each.tojson() for each in self.guesses],
             "maxKnown": str(self.maxKnown),
+            "kdf": self.kdf.tojson(),
         }
 
     @classmethod
@@ -188,6 +280,7 @@ class Memorization2:
             tokenType=TokenType(data["tokenType"]),
             guesses=[UserGuess.fromjson(each) for each in data["guesses"]],
             maxKnown=int(data["maxKnown"]),
+            kdf=SCryptParameters.fromjson(data.get("kdf", oldDefaultScryptParams)),
         )
 
     @classmethod
@@ -205,6 +298,7 @@ class Memorization2:
             tokenType=TokenType.words,
             guesses=[],
             maxKnown=3,
+            kdf=determineScryptParameters(),
         )
         self.generateOne()
         return self
@@ -219,7 +313,9 @@ class Memorization2:
         if not self.guesses:
             return time()
         else:
-            return self.guesses[-1].timestamp + min(86400, (90 * (1.4**self.correctGuessCount())))
+            return self.guesses[-1].timestamp + min(
+                86400, (90 * (1.4 ** self.correctGuessCount()))
+            )
 
     def correctThreshold(self) -> int:
         """
@@ -242,7 +338,7 @@ class Memorization2:
         """
         Generate one additional token.
         """
-        chosen = r.choice(self.tokenType.tokens())
+        chosen = random.choice(self.tokenType.tokens())
         if self.generatedCount > self.maxKnown:
             # we no longer remember the entire passphrase, but the key has to
             # represent the entire passphrase.
@@ -258,7 +354,7 @@ class Memorization2:
             tokens = self.tokenType.retokenize(wholePassphrase)
             newTokenMismatch = tokens[-1] != chosen
             oldTokenMismatch = (
-                kdf(
+                self.kdf.kdf(
                     salt=self.salt,
                     password=self.tokenType.separator.join(tokens[:-1]).encode("utf-8"),
                 )
@@ -275,7 +371,9 @@ class Memorization2:
         if len(self.knownTokens) > self.maxKnown:
             self.knownTokens.pop(0)
         self.salt = urandom(16)
-        self.key = kdf(salt=self.salt, password=wholePassphrase.encode("utf-8"))
+        self.key = self.kdf.kdf(
+            salt=self.salt, password=wholePassphrase.encode("utf-8")
+        )
 
     def prompt(self) -> bool:
         remaining = self.nextPromptTime() - time()
@@ -285,7 +383,9 @@ class Memorization2:
             )
             return False
         userInput = getpass(f"\n\n\n{self.label} (reminder: {self.string()}): ")
-        correct = kdf(salt=self.salt, password=userInput.encode("utf-8")) == self.key
+        correct = (
+            self.kdf.kdf(salt=self.salt, password=userInput.encode("utf-8")) == self.key
+        )
         self.guesses.append(
             UserGuess(correct=correct, timestamp=time(), length=self.generatedCount)
         )
@@ -352,6 +452,8 @@ class Memorization:
 
     entryTimes: list[tuple[float, bool]]
 
+    kdf: SCryptParameters
+
     @classmethod
     def new(
         cls,
@@ -363,9 +465,11 @@ class Memorization:
         """
         create a new password to memorize
         """
-        remainingTokens = [r.choice(tokens) for _ in range(length)]
+        remainingTokens = [random.choice(tokens) for _ in range(length)]
         salt = urandom(16)
-        key = kdf(salt=salt, password=separator.join(remainingTokens).encode("utf-8"))
+        kdf = determineScryptParameters()
+        password = separator.join(remainingTokens).encode("utf-8")
+        key = kdf.kdf(salt=salt, password=password)
         return Memorization(
             label=label,
             remainingTokens=remainingTokens,
@@ -374,6 +478,7 @@ class Memorization:
             separator=separator,
             salt=salt,
             key=key,
+            kdf=kdf,
             entryTimes=[],
         )
 
@@ -396,7 +501,9 @@ class Memorization:
             return False
         userInput = getpass(f"\n\n\n{self.label} (reminder: {self.string()}): ")
         timestamp = time()
-        correct = kdf(salt=self.salt, password=userInput.encode("utf-8")) == self.key
+        correct = (
+            self.kdf.kdf(salt=self.salt, password=userInput.encode("utf-8")) == self.key
+        )
         self.entryTimes.append((timestamp, correct))
         if correct:
             SUCCESS_THRESHOLD = 5
@@ -426,6 +533,7 @@ class Memorization:
             "salt": self.salt.hex(),
             "key": self.key.hex(),
             "entryTimes": self.entryTimes,
+            "kdf": self.kdf.tojson(),
         }
 
     @classmethod
@@ -442,6 +550,7 @@ class Memorization:
             salt=bytes.fromhex(data["salt"]),
             key=bytes.fromhex(data["key"]),
             entryTimes=data["entryTimes"],
+            kdf=SCryptParameters.fromjson(data.get("kdf", oldDefaultScryptParams)),
         )
 
     def nextPromptTime(self) -> float:
@@ -493,11 +602,13 @@ class PinPalApp:
         self = PinPalApp([load(each) for each in loads(stored)])
         return self
 
+
 def load(x: dict[str, object]) -> Memorization | Memorization2:
     if "targetTokenCount" in x:
         return Memorization2.fromjson(x)
     else:
         return Memorization.fromjson(x)
+
 
 def main() -> None:
     """
@@ -513,7 +624,7 @@ def main() -> None:
                 stdout.write(" 📌 Time To Run PinPal 📌")
         exit(0)
     if len(argv) > 1 and argv[1] == "test":
-        testing: Memorization2|Memorization = Memorization2.new("testing")
+        testing: Memorization2 | Memorization = Memorization2.new("testing")
         while True:
             testing = load(loads(dumps(testing.tojson())))
             testing.prompt()
