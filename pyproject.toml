@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.urls]
-Home = "https://glyph.im/pinpal/"
+Home = "https://github.com/glyph/pinpal/"
 
 [project.scripts]
 pinpal = "pinpal:main"
