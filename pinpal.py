@@ -377,15 +377,16 @@ class Memorization2:
 
     def prompt(self) -> bool:
         remaining = self.nextPromptTime() - time()
-        if remaining > 0:
-            print(
-                "next reminder for", repr(self.label), "in", int(remaining), "seconds"
-            )
-            return False
-        userInput = getpass(f"\n\n\n{self.label} (reminder: {self.string()}): ")
-        correct = (
-            self.kdf.kdf(salt=self.salt, password=userInput.encode("utf-8")) == self.key
+        correct = promptUser(
+            nextTime=self.nextPromptTime(),
+            label=self.label,
+            reminder=self.string(),
+            kdf=self.kdf,
+            salt=self.salt,
+            key=self.key,
         )
+        if correct is None:
+            return False
         self.guesses.append(
             UserGuess(correct=correct, timestamp=time(), length=self.generatedCount)
         )
@@ -493,18 +494,17 @@ class Memorization:
         return self.separator.join(allTokens)
 
     def prompt(self) -> bool:
-        remaining = self.nextPromptTime() - time()
-        if remaining > 0:
-            print(
-                "next reminder for", repr(self.label), "in", int(remaining), "seconds"
-            )
-            return False
-        userInput = getpass(f"\n\n\n{self.label} (reminder: {self.string()}): ")
-        timestamp = time()
-        correct = (
-            self.kdf.kdf(salt=self.salt, password=userInput.encode("utf-8")) == self.key
+        correct = promptUser(
+            nextTime=self.nextPromptTime(),
+            label=self.label,
+            reminder=self.string(),
+            kdf=self.kdf,
+            salt=self.salt,
+            key=self.key,
         )
-        self.entryTimes.append((timestamp, correct))
+        if correct is None:
+            return False
+        self.entryTimes.append((time(), correct))
         if correct:
             SUCCESS_THRESHOLD = 5
             self.successCount += 1
@@ -566,6 +566,32 @@ class Memorization:
         # need to delay. want to memorize a password in around 3 days or so. 6
         # digits, 5 correct guesses per digit necessary.  30 guesses minimum.
         return timestamp + min(86400, (90 * (2**self.successCount)))
+
+
+def promptUser(
+    *,
+    nextTime: float,
+    label: str,
+    reminder: str,
+    kdf: SCryptParameters,
+    salt: bytes,
+    key: bytes,
+    attempts: int = 4,
+) -> bool | None:
+    """
+    Prompt the user.
+    """
+    remaining = nextTime - time()
+    if remaining > 0:
+        print("next reminder for", label, "in", int(remaining), "seconds")
+        return None
+    attempt = ""
+    for repetition in range(attempts):
+        userInput = getpass(f"\n\n\n{label} (reminder: {reminder}){attempt}: ")
+        attempt = f" (attempt {repetition + 2}/{attempts})"
+        if kdf.kdf(salt=salt, password=userInput.encode("utf-8")) == key:
+            return True
+    return False
 
 
 timecache = expanduser("~/.pinpal-timestamp")
