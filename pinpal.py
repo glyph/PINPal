@@ -647,7 +647,7 @@ def main() -> None:
             with open(timecache) as f:
                 needsCheckAt = float(f.read())
             if needsCheckAt < time():
-                stdout.write(" 📌 Time To Run PinPal 📌")
+                stdout.write(" 📌⏰")
         exit(0)
     if len(argv) > 1 and argv[1] == "test":
         testing: Memorization2 | Memorization = Memorization2.new("testing")
