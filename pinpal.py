@@ -664,6 +664,14 @@ def main() -> None:
         newLabel = input("What do you want to call this new PIN?")
         m = Memorization2.new(newLabel)
         app.memorizations.append(m)
+    elif len(argv) > 1 and argv[1] == "drop":
+        for idx, mem in enumerate(app.memorizations):
+            print(f"{idx}: {mem.label}")
+        dropnum = input("Which number do you want to drop? ")
+        dropidx = int(dropnum)
+        if (input(f"Dropping {mem.label}, OK?")) == "yes":
+            del app.memorizations[dropidx]
+            print("OK, dropped.")
     else:
         for each in app.memorizations:
             each.prompt()
