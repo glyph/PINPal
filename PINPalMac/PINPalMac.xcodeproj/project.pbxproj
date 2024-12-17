@@ -1,0 +1,77 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXFileReference section */
+		F096FB832D11FCF000778795 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		F096FB842D1201B700778795 /* PINList.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PINList.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		F096FB7C2D11FCDB00778795 = {
+			isa = PBXGroup;
+			children = (
+				F096FB832D11FCF000778795 /* MainMenu.xib */,
+				F096FB842D1201B700778795 /* PINList.xib */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		F096FB7D2D11FCDB00778795 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1620;
+			};
+			buildConfigurationList = F096FB802D11FCDB00778795 /* Build configuration list for PBXProject "PINPalMac" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F096FB7C2D11FCDB00778795;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		F096FB812D11FCDB00778795 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		F096FB822D11FCDB00778795 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F096FB802D11FCDB00778795 /* Build configuration list for PBXProject "PINPalMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F096FB812D11FCDB00778795 /* Debug */,
+				F096FB822D11FCDB00778795 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F096FB7D2D11FCDB00778795 /* Project object */;
+}

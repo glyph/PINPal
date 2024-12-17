@@ -23,3 +23,33 @@ Home = "https://github.com/glyph/pinpal/"
 
 [project.scripts]
 pinpal = "pinpal:main"
+
+
+[project.optional-dependencies]
+
+gui = [
+  "py2app ; sys_platform == 'darwin'",
+  "pyobjc-core ; sys_platform == 'darwin'",
+  "pyobjc-framework-Cocoa ; sys_platform == 'darwin'",
+  "pyobjc-framework-ExceptionHandling ; sys_platform == 'darwin'",
+  "pyobjc-framework-UserNotifications ; sys_platform == 'darwin'",
+  "pyobjc-framework-CFNetwork ; sys_platform == 'darwin'",
+  "quickmacapp ; sys_platform == 'darwin'",
+  "quickmachotkey ; sys_platform == 'darwin'",
+
+  "ewmh ; sys_platform == 'linux'",
+  "pycairo ; sys_platform == 'linux'",
+  "PyGObject ; sys_platform == 'linux'",
+  "python-xlib ; sys_platform == 'linux'",
+  "pydbus ; sys_platform == 'linux'",
+]
+
+dev = [
+  "pip-tools",
+  "mypy",
+  "mypy-zope",
+  "types-python-dateutil",
+  "pygobject-stubs",
+  "types-python-xlib",
+  "encrust ; sys_platform == 'darwin'",
+]

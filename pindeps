@@ -1,0 +1,10 @@
+#!/bin/sh
+
+pip-compile --strip-extras --quiet --upgrade --allow-unsafe --no-emit-index-url
+pip-compile --strip-extras --quiet --upgrade --allow-unsafe --no-emit-index-url --extra gui -o "$(
+            python3 -c '
+import platform
+print(platform.platform().split("-")[0])
+'
+)-gui.requirements.txt"
+pip-compile --strip-extras --quiet --upgrade --allow-unsafe --no-emit-index-url --extra dev -o dev-requirements.txt

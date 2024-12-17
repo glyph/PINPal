@@ -1,0 +1,6 @@
+build
+dist
+*.xcuserstate
+.wheels
+Pipfile*
+**/__pycache__
