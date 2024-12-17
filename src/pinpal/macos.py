@@ -1,9 +1,40 @@
 
-from AppKit import NSApplication, NSNib
+from objc import object_property
+from AppKit import NSApplication, NSNib, NSTableView, NSTableColumn
 from Foundation import NSObject
-from quickmacapp import Status, answer, mainpoint
-from twisted.internet.defer import Deferred
+from quickmacapp import Status, mainpoint# , answer
+# from twisted.internet.defer import Deferred
 from twisted.internet.interfaces import IReactorTime
+
+from . import PinPalApp, Memorization2
+
+
+class MemorizationDataSource(NSObject):
+    pinPalApp: PinPalApp = object_property()
+
+    def awakeFromNib(self) -> None:
+        loaded = PinPalApp.load()
+        if loaded is None:
+            loaded = PinPalApp([])
+        self.pinPalApp = loaded
+
+    def numberOfRowsInTableView_(
+        self,
+        tableView: NSTableView,
+    ) -> int:
+        return len(self.pinPalApp.memorizations)
+
+    def tableView_objectValueForTableColumn_row_(
+        self,
+        tableView: NSTableView,
+        column: NSTableColumn,
+        row: int,
+    ) -> object:
+        item = self.pinPalApp.memorizations[row]
+        return {
+            "label": item.label,
+            "guesses": len(item.guesses) if isinstance(item, Memorization2) else item.successCount,
+        }
 
 
 class PINPalAppOwner(NSObject):
@@ -23,18 +54,17 @@ def main(reactor: IReactorTime) -> None:
     owner = PINPalAppOwner.alloc().init()
 
     def sayHello() -> None:
-        Deferred.fromCoroutine(answer("hi"))
-        nibInstance = NSNib.alloc().initWithNibNamed_bundle_(
-            "PINList.nib", None
-        )
+        # Deferred.fromCoroutine(answer("hi"))
+        nibInstance = NSNib.alloc().initWithNibNamed_bundle_("PINList.nib", None)
         nibInstance.instantiateWithOwner_topLevelObjects_(owner, None)
 
     def bye() -> None:
         NSApplication.sharedApplication().terminate_(owner)
 
+    sayHello()
     status.menu(
         [
-            ("Hello World", sayHello),
+            # ("Hello World", sayHello),
             ("Quit", bye),
         ]
     )

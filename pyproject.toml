@@ -61,6 +61,7 @@ plugins = ["mypy_zope:plugin"]
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
 module = [
+  "objc",
   "Foundation",
   "AppKit",
 ]
