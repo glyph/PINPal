@@ -1,17 +1,22 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
+requires = [
+  "setuptools>=42,<71.0.0",
+  "wheel",
+]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "pinpal"
 authors = [{name = "Glyph", email = "glyph@glyph.im"}]
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
-dynamic = ["version", "description"]
+readme = "README.md"
 dependencies = [
     "keyring",
     "horsephrase",
 ]
+
+version = "2024.12.0"
 
 [project.urls]
 Home = "https://github.com/glyph/pinpal/"

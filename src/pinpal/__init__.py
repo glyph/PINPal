@@ -4,8 +4,6 @@ PINPal: a tool for helping you memorize PINs
 
 from __future__ import annotations
 
-__version__ = "2023.04.22"
-
 from dataclasses import dataclass
 from enum import Enum
 from getpass import getpass
