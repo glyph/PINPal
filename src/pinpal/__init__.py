@@ -645,6 +645,12 @@ def main() -> None:
         if exists(timecache):
             with open(timecache) as f:
                 needsCheckAt = float(f.read())
+            """
+            # the driver is just at 0, we don't advance it before loading
+            scheduler = loadScheduler(driver := MemoryDriver())
+            if driver.willRunAfter(time()):
+                stdout.write(" 📌⏰")
+            """
             if needsCheckAt < time():
                 stdout.write(" 📌⏰")
         exit(0)
