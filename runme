@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-mypy ./src;
+mypy --config-file pyproject.toml ./src;
 rm -fr ./build ./dist;
 python py2app_setup.py py2app --alias;
 rm -fr ./build;

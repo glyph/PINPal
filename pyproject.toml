@@ -53,3 +53,15 @@ dev = [
   "types-python-xlib",
   "encrust ; sys_platform == 'darwin'",
 ]
+
+[tool.mypy]
+namespace_packages = true
+plugins = ["mypy_zope:plugin"]
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = [
+  "Foundation",
+  "AppKit",
+]
+
