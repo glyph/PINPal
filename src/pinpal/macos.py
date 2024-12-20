@@ -1,8 +1,8 @@
-
 from objc import object_property
 from AppKit import NSApplication, NSNib, NSTableView, NSTableColumn
 from Foundation import NSObject
-from quickmacapp import Status, mainpoint# , answer
+from quickmacapp import Status, mainpoint  # , answer
+
 # from twisted.internet.defer import Deferred
 from twisted.internet.interfaces import IReactorTime
 
@@ -11,12 +11,18 @@ from . import PinPalApp, Memorization2
 
 class MemorizationDataSource(NSObject):
     pinPalApp: PinPalApp = object_property()
+    selectedRow: NSObject = object_property()
 
     def awakeFromNib(self) -> None:
         loaded = PinPalApp.load()
         if loaded is None:
             loaded = PinPalApp([])
         self.pinPalApp = loaded
+
+    def tableViewSelectionDidChange_(self, notification: NSObject) -> None:
+        self.selectedRow = self.tableView_objectValueForTableColumn_row_(
+            None, None, notification.object().selectedRowIndexes().firstIndex()
+        )
 
     def numberOfRowsInTableView_(
         self,
@@ -33,7 +39,11 @@ class MemorizationDataSource(NSObject):
         item = self.pinPalApp.memorizations[row]
         return {
             "label": item.label,
-            "guesses": len(item.guesses) if isinstance(item, Memorization2) else item.successCount,
+            "guesses": (
+                len(item.guesses)
+                if isinstance(item, Memorization2)
+                else item.successCount
+            ),
         }
 
 
