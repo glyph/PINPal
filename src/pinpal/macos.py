@@ -6,7 +6,8 @@ from quickmacapp import Status, mainpoint  # , answer
 # from twisted.internet.defer import Deferred
 from twisted.internet.interfaces import IReactorTime
 
-from . import PinPalApp, Memorization2
+from .app import PinPalApp
+from .mem2 import Memorization2
 
 
 class MemorizationDataSource(NSObject):
