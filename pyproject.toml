@@ -22,7 +22,7 @@ version = "2024.12.0"
 Home = "https://github.com/glyph/pinpal/"
 
 [project.scripts]
-pinpal = "pinpal:main"
+pinpal = "pinpal.cli:main"
 
 
 [project.optional-dependencies]
