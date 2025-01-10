@@ -6,22 +6,20 @@ from time import time
 from getpass import getpass
 from secrets import token_bytes
 
-from .difficulty import SCryptParameters, oldDefaultScryptParams, determineScryptParameters, sysrand
+from .difficulty import (
+    SCryptParameters,
+    oldDefaultScryptParams,
+    determineScryptParameters,
+    sysrand,
+)
 from .txtui import show, promptUser
 
 
-class TokenType(Enum):
+@dataclass
+class TokenInfo:
     tokens: Callable[[], Sequence[str]]
     separator: str
     retokenize: Callable[[str], Sequence[str]]
-
-    numbers = "numbers"
-    words = "words"
-
-
-TokenType.numbers.tokens = lambda: "0123456789"
-TokenType.numbers.separator = ""
-TokenType.numbers.retokenize = lambda x: list(x)
 
 
 def horsephrase_tokens() -> Sequence[str]:
@@ -30,9 +28,9 @@ def horsephrase_tokens() -> Sequence[str]:
     return words
 
 
-TokenType.words.tokens = horsephrase_tokens
-TokenType.words.separator = " "
-TokenType.words.retokenize = lambda x: x.split(" ")
+class TokenType(Enum):
+    numbers = TokenInfo(lambda: "0123456789", ", ", lambda x: list(x))
+    words = TokenInfo(horsephrase_tokens, " ", lambda x: x.split(" "))
 
 
 @dataclass
@@ -146,7 +144,7 @@ class Memorization2:
             "generatedCount": str(self.generatedCount),
             "salt": self.salt.hex(),
             "key": self.key.hex(),
-            "tokenType": self.tokenType.value,
+            "tokenType": self.tokenType.name,
             "guesses": [each.tojson() for each in self.guesses],
             "maxKnown": str(self.maxKnown),
             "kdf": self.kdf.tojson(),
@@ -164,7 +162,7 @@ class Memorization2:
             generatedCount=int(data["generatedCount"]),
             salt=bytes.fromhex(data["salt"]),
             key=bytes.fromhex(data["key"]),
-            tokenType=TokenType(data["tokenType"]),
+            tokenType=TokenType[data["tokenType"]],
             guesses=[UserGuess.fromjson(each) for each in data["guesses"]],
             maxKnown=int(data["maxKnown"]),
             kdf=SCryptParameters.fromjson(data.get("kdf", oldDefaultScryptParams)),
@@ -191,7 +189,9 @@ class Memorization2:
         return self
 
     def string(self) -> str:
-        return show(self.tokenType.separator, self.knownTokens, self.generatedCount)
+        return show(
+            self.tokenType.value.separator, self.knownTokens, self.generatedCount
+        )
 
     def nextPromptTime(self) -> float:
         """
@@ -225,25 +225,27 @@ class Memorization2:
         """
         Generate one additional token.
         """
-        chosen = sysrand.choice(self.tokenType.tokens())
+        chosen = sysrand.choice(self.tokenType.value.tokens())
         if self.generatedCount > self.maxKnown:
             # we no longer remember the entire passphrase, but the key has to
             # represent the entire passphrase.
             wholePassphrase = getpass(
                 "enter correctly to confirm: "
                 + show(
-                    self.tokenType.separator,
+                    self.tokenType.value.separator,
                     self.knownTokens + [chosen],
                     self.generatedCount + 1,
                 )
                 + ": "
             )
-            tokens = self.tokenType.retokenize(wholePassphrase)
+            tokens = self.tokenType.value.retokenize(wholePassphrase)
             newTokenMismatch = tokens[-1] != chosen
             oldTokenMismatch = (
                 self.kdf.kdf(
                     salt=self.salt,
-                    password=self.tokenType.separator.join(tokens[:-1]).encode("utf-8"),
+                    password=self.tokenType.value.separator.join(tokens[:-1]).encode(
+                        "utf-8"
+                    ),
                 )
                 != self.key
             )
@@ -251,7 +253,9 @@ class Memorization2:
                 print("passphrase incorrect")
                 return
         else:
-            wholePassphrase = self.tokenType.separator.join([*self.knownTokens, chosen])
+            wholePassphrase = self.tokenType.value.separator.join(
+                [*self.knownTokens, chosen]
+            )
         # commit!
         self.generatedCount += 1
         self.knownTokens.append(chosen)
