@@ -56,4 +56,4 @@ jobs:
 
       - name: Test
         run: |
-          python -m unittest pinpal.test
+          python -m unittest discover src
