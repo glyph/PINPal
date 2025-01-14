@@ -56,4 +56,4 @@ jobs:
 
       - name: Test
         run: |
-          pythonn -m unittest pomodouroboros.model.test
+          python -m unittest pomodouroboros.model.test
