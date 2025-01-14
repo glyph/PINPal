@@ -95,22 +95,24 @@ class Memorization2:
 
     knownTokens: list[str]
     """
-    The tokens currently known to and stored by PinPal itself.
+    The list of tokens that the user is in the process of memorizing, that
+    pinpal is storing in plaintext in order to prompt the user each time.
     """
 
     generatedCount: int
     """
-    The number of tokens generated and stored in C{self.key}.
+    The total number of tokens generated so far by this memorization, including
+    both plaintext-stored and already-forgotten tokens.
     """
 
     salt: bytes
     """
-    Salt for deriving the key.
+    Randomized salt for deriving the key. (16 random token bytes.)
     """
 
     key: bytes
     """
-    The encrypted partial portion of the thing being memorized.
+    The output of the KDF of all tokens generated so far (both plaintext-stored and already-forgotten).  
     """
 
     tokenType: TokenType
@@ -125,13 +127,24 @@ class Memorization2:
 
     maxKnown: int
     """
-    The maximum number of tokens we can have stored.
+    The maximum number of tokens we can have stored in plaintext.
     """
 
     kdf: SCryptParameters
     """
     The parameters for the KDF.
     """
+
+    @property
+    def done(self) -> bool:
+        """
+        Have we generated every token that we are going to generate, and
+        forgotten all plaintext tokens, storing only the metadata and KDF
+        output?
+        """
+        return (self.generatedCount == self.targetTokenCount) and (
+            0 == len(self.knownTokens)
+        )
 
     def tojson(self) -> dict[str, object]:
         """

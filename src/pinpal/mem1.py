@@ -54,6 +54,10 @@ class Memorization:
 
     kdf: SCryptParameters
 
+    @property
+    def done(self) -> bool:
+        return len(self.remainingTokens) == 0
+
     @classmethod
     def new(
         cls,
