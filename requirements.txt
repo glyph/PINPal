@@ -18,7 +18,3 @@ more-itertools==10.6.0
     # via
     #   jaraco-classes
     #   jaraco-functools
-
-# The following packages are considered to be unsafe in a requirements file:
-setuptools==70.3.0
-    # via pinpal (pyproject.toml)
