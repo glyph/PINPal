@@ -112,17 +112,19 @@ class Memorization2:
 
     key: bytes
     """
-    The output of the KDF of all tokens generated so far (both plaintext-stored and already-forgotten).  
+    The output of the KDF of all tokens generated so far (both plaintext-stored
+    and already-forgotten).
     """
 
     tokenType: TokenType
     """
-    The type of tokens being generated.
+    The type of tokens being generated (i.e.: numbers L{TokenType.numbers} for
+    a short PIN, words L{TokenType.words} for a passphrase).
     """
 
     guesses: list[UserGuess]
     """
-    Every time the user has guessed.
+    A record of all the user's guesses, both successful and unsuccessful.
     """
 
     maxKnown: int
@@ -203,12 +205,16 @@ class Memorization2:
 
     def string(self) -> str:
         return show(
-            self.tokenType.value.separator, self.knownTokens, self.generatedCount
+            self.tokenType.value.separator,
+            self.knownTokens,
+            self.generatedCount,
+            0 if not self.knownTokens else 1 if self.correctGuessCount() >= 2 else 0,
         )
 
     def nextPromptTime(self) -> float:
         """
-        The time for the next prompt
+        The time (in epoch seconds) at which the next prompt to the user ought
+        to be displayed.
         """
         if not self.guesses:
             return time()
@@ -225,7 +231,10 @@ class Memorization2:
         return (self.generatedCount) * 2
 
     def correctGuessCount(self) -> int:
-        """ """
+        """
+        Compute the number of continuous correct guesses at the current length
+        of the password.
+        """
         result = 0
         for each in reversed(self.guesses):
             if each.correct and each.length == self.generatedCount:
@@ -248,6 +257,7 @@ class Memorization2:
                     self.tokenType.value.separator,
                     self.knownTokens + [chosen],
                     self.generatedCount + 1,
+                    0,
                 )
                 + ": "
             )
@@ -283,10 +293,13 @@ class Memorization2:
         correct = promptUser(
             nextTime=self.nextPromptTime(),
             label=self.label,
-            reminder=self.string(),
             kdf=self.kdf,
             salt=self.salt,
             key=self.key,
+            separator=self.tokenType.value.separator,
+            knownTokens=self.knownTokens,
+            totalTokens=self.generatedCount,
+            hiddenTokens=0 if not self.knownTokens else 1 if self.correctGuessCount() >= 2 else 0,
         )
         if correct is None:
             return False
