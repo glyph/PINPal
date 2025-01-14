@@ -15,7 +15,7 @@ automat==24.8.1
     # via twisted
 build==1.2.2.post1
     # via pip-tools
-click==8.1.7
+click==8.1.8
     # via
     #   encrust
     #   pip-tools
@@ -39,7 +39,7 @@ jaraco-context==6.0.1
     # via keyring
 jaraco-functools==4.1.0
     # via keyring
-keyring==25.5.0
+keyring==25.6.0
     # via pinpal (pyproject.toml)
 macholib==1.16.3
     # via
@@ -47,17 +47,17 @@ macholib==1.16.3
     #   py2app
 modulegraph==0.19.6
     # via py2app
-more-itertools==10.5.0
+more-itertools==10.6.0
     # via
     #   jaraco-classes
     #   jaraco-functools
-mypy==1.13.0
+mypy==1.14.1
     # via
     #   mypy-zope
     #   pinpal (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
-mypy-zope==1.0.9
+mypy-zope==1.0.10
     # via pinpal (pyproject.toml)
 packaging==24.2
     # via
@@ -102,10 +102,11 @@ zope-schema==7.0.1
 # The following packages are considered to be unsafe in a requirements file:
 pip==24.3.1
     # via pip-tools
-setuptools==75.6.0
+setuptools==70.3.0
     # via
     #   incremental
     #   modulegraph
+    #   pinpal (pyproject.toml)
     #   pip-tools
     #   zope-event
     #   zope-interface
