@@ -56,4 +56,4 @@ jobs:
 
       - name: Test
         run: |
-          python -m unittest pomodouroboros.model.test
+          python -m unittest pinpal.test
