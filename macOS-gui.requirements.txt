@@ -9,7 +9,7 @@ altgraph==0.17.4
     #   macholib
     #   modulegraph
     #   py2app
-anyio==4.7.0
+anyio==4.8.0
     # via httpx
 appdirs==1.4.4
     # via twisted
@@ -55,7 +55,7 @@ hyperframe==6.0.1
     # via h2
 hyperlink==21.0.0
     # via twisted
-hypothesis==6.122.3
+hypothesis==6.123.17
     # via twisted
 idna==3.10
     # via
@@ -71,13 +71,13 @@ jaraco-context==6.0.1
     # via keyring
 jaraco-functools==4.1.0
     # via keyring
-keyring==25.5.0
+keyring==25.6.0
     # via pinpal (pyproject.toml)
 macholib==1.16.3
     # via py2app
 modulegraph==0.19.6
     # via py2app
-more-itertools==10.5.0
+more-itertools==10.6.0
     # via
     #   jaraco-classes
     #   jaraco-functools
@@ -97,7 +97,7 @@ pycparser==2.22
     # via cffi
 pyhamcrest==2.1.0
     # via twisted
-pyobjc-core==10.3.2 ; sys_platform == "darwin"
+pyobjc-core==11.0 ; sys_platform == "darwin"
     # via
     #   pinpal (pyproject.toml)
     #   pyobjc-framework-cfnetwork
@@ -106,11 +106,11 @@ pyobjc-core==10.3.2 ; sys_platform == "darwin"
     #   pyobjc-framework-usernotifications
     #   quickmachotkey
     #   twisted
-pyobjc-framework-cfnetwork==10.3.2 ; sys_platform == "darwin"
+pyobjc-framework-cfnetwork==11.0 ; sys_platform == "darwin"
     # via
     #   pinpal (pyproject.toml)
     #   twisted
-pyobjc-framework-cocoa==10.3.2 ; sys_platform == "darwin"
+pyobjc-framework-cocoa==11.0 ; sys_platform == "darwin"
     # via
     #   pinpal (pyproject.toml)
     #   pyobjc-framework-cfnetwork
@@ -118,15 +118,15 @@ pyobjc-framework-cocoa==10.3.2 ; sys_platform == "darwin"
     #   pyobjc-framework-usernotifications
     #   quickmacapp
     #   twisted
-pyobjc-framework-exceptionhandling==10.3.2 ; sys_platform == "darwin"
+pyobjc-framework-exceptionhandling==11.0 ; sys_platform == "darwin"
     # via
     #   pinpal (pyproject.toml)
     #   quickmacapp
-pyobjc-framework-usernotifications==10.3.2 ; sys_platform == "darwin"
+pyobjc-framework-usernotifications==11.0 ; sys_platform == "darwin"
     # via
     #   pinpal (pyproject.toml)
     #   quickmacapp
-pyopenssl==24.3.0
+pyopenssl==25.0.0
     # via twisted
 pyserial==3.5
     # via twisted
@@ -145,13 +145,15 @@ twisted==24.11.0
 typing-extensions==4.12.2
     # via
     #   anyio
+    #   pyopenssl
     #   twisted
 zope-interface==7.2
     # via twisted
 
 # The following packages are considered to be unsafe in a requirements file:
-setuptools==75.6.0
+setuptools==70.3.0
     # via
     #   incremental
     #   modulegraph
+    #   pinpal (pyproject.toml)
     #   zope-interface

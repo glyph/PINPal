@@ -44,6 +44,10 @@ def main() -> None:
         m = Memorization2.new(newLabel)
         app.memorizations.append(m)
 
+    elif subCommand == "list":
+        for idx, mem in enumerate(app.memorizations):
+            print(f"{idx}: {mem.label} {'done' if mem.done else 'in-progress'}")
+
     elif subCommand == "drop":
         for idx, mem in enumerate(app.memorizations):
             print(f"{idx}: {mem.label}")

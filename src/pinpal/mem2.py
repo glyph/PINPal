@@ -95,43 +95,58 @@ class Memorization2:
 
     knownTokens: list[str]
     """
-    The tokens currently known to and stored by PinPal itself.
+    The list of tokens that the user is in the process of memorizing, that
+    pinpal is storing in plaintext in order to prompt the user each time.
     """
 
     generatedCount: int
     """
-    The number of tokens generated and stored in C{self.key}.
+    The total number of tokens generated so far by this memorization, including
+    both plaintext-stored and already-forgotten tokens.
     """
 
     salt: bytes
     """
-    Salt for deriving the key.
+    Randomized salt for deriving the key. (16 random token bytes.)
     """
 
     key: bytes
     """
-    The encrypted partial portion of the thing being memorized.
+    The output of the KDF of all tokens generated so far (both plaintext-stored
+    and already-forgotten).
     """
 
     tokenType: TokenType
     """
-    The type of tokens being generated.
+    The type of tokens being generated (i.e.: numbers L{TokenType.numbers} for
+    a short PIN, words L{TokenType.words} for a passphrase).
     """
 
     guesses: list[UserGuess]
     """
-    Every time the user has guessed.
+    A record of all the user's guesses, both successful and unsuccessful.
     """
 
     maxKnown: int
     """
-    The maximum number of tokens we can have stored.
+    The maximum number of tokens we can have stored in plaintext.
     """
 
     kdf: SCryptParameters
     """
     The parameters for the KDF.
     """
+
+    @property
+    def done(self) -> bool:
+        """
+        Have we generated every token that we are going to generate, and
+        forgotten all plaintext tokens, storing only the metadata and KDF
+        output?
+        """
+        return (self.generatedCount == self.targetTokenCount) and (
+            0 == len(self.knownTokens)
+        )
 
     def tojson(self) -> dict[str, object]:
         """
@@ -190,12 +205,16 @@ class Memorization2:
 
     def string(self) -> str:
         return show(
-            self.tokenType.value.separator, self.knownTokens, self.generatedCount
+            self.tokenType.value.separator,
+            self.knownTokens,
+            self.generatedCount,
+            0 if not self.knownTokens else 1 if self.correctGuessCount() >= 2 else 0,
         )
 
     def nextPromptTime(self) -> float:
         """
-        The time for the next prompt
+        The time (in epoch seconds) at which the next prompt to the user ought
+        to be displayed.
         """
         if not self.guesses:
             return time()
@@ -212,7 +231,10 @@ class Memorization2:
         return (self.generatedCount) * 2
 
     def correctGuessCount(self) -> int:
-        """ """
+        """
+        Compute the number of continuous correct guesses at the current length
+        of the password.
+        """
         result = 0
         for each in reversed(self.guesses):
             if each.correct and each.length == self.generatedCount:
@@ -235,6 +257,7 @@ class Memorization2:
                     self.tokenType.value.separator,
                     self.knownTokens + [chosen],
                     self.generatedCount + 1,
+                    0,
                 )
                 + ": "
             )
@@ -270,10 +293,13 @@ class Memorization2:
         correct = promptUser(
             nextTime=self.nextPromptTime(),
             label=self.label,
-            reminder=self.string(),
             kdf=self.kdf,
             salt=self.salt,
             key=self.key,
+            separator=self.tokenType.value.separator,
+            knownTokens=self.knownTokens,
+            totalTokens=self.generatedCount,
+            hiddenTokens=0 if not self.knownTokens else 1 if self.correctGuessCount() >= 2 else 0,
         )
         if correct is None:
             return False

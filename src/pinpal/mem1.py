@@ -54,6 +54,10 @@ class Memorization:
 
     kdf: SCryptParameters
 
+    @property
+    def done(self) -> bool:
+        return len(self.remainingTokens) == 0
+
     @classmethod
     def new(
         cls,
@@ -96,10 +100,13 @@ class Memorization:
         correct = promptUser(
             nextTime=self.nextPromptTime(),
             label=self.label,
-            reminder=self.string(),
             kdf=self.kdf,
             salt=self.salt,
             key=self.key,
+            separator=self.separator,
+            knownTokens=self.remainingTokens,
+            totalTokens=len(self.remainingTokens) + self.tokensMemorized,
+            hiddenTokens=0,
         )
         if correct is None:
             return False
