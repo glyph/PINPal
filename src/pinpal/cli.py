@@ -1,17 +1,21 @@
 from os.path import exists
 from time import time
 
-from .app import load, timecache, PinPalApp
+from twisted.internet.defer import Deferred
+
+from .app import PinPalApp, load, timecache
 from .mem1 import Memorization
 from .mem2 import Memorization2
+from .txtui import TerminalUserPrompter
 
 
-def doSelfTest() -> None:
+async def doSelfTest(p: TerminalUserPrompter) -> None:
     from json import dumps, loads
+
     testing: Memorization2 | Memorization = Memorization2.new("testing")
     while True:
         testing = load(loads(dumps(testing.tojson())))
-        testing.prompt()
+        await testing.prompt(p)
 
 
 def main() -> None:
@@ -30,8 +34,9 @@ def main() -> None:
 
     subCommand = None if len(argv) < 2 else argv[1]
 
+    prompter = TerminalUserPrompter()
     if subCommand == "test":
-        doSelfTest()
+        Deferred.fromCoroutine(doSelfTest(prompter))
 
     app = (
         PinPalApp.new()
@@ -58,8 +63,12 @@ def main() -> None:
             print("OK, dropped.")
 
     else:
-        for each in app.memorizations:
-            each.prompt()
+        async def allPrompts() -> None:
+            for each in app.memorizations:
+                await each.prompt(prompter)
+        # Note: this is async, but synchronous; more correct would be to run
+        # the reactor, but we don't really need to yet in this case.
+        Deferred.fromCoroutine(allPrompts())
     app.save()
 
 

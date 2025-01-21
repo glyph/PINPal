@@ -1,18 +1,17 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable, Sequence
-from time import time
 from getpass import getpass
 from secrets import token_bytes
+from time import time
+from typing import Any, Callable, Sequence
 
-from .difficulty import (
-    SCryptParameters,
-    oldDefaultScryptParams,
-    determineScryptParameters,
-    sysrand,
-)
-from .txtui import show, promptUser
+from pinpal.uiboundary import UserPrompter
+
+from .difficulty import (SCryptParameters, determineScryptParameters,
+                         oldDefaultScryptParams, sysrand)
+from .txtui import show
 
 
 @dataclass
@@ -289,8 +288,8 @@ class Memorization2:
             salt=self.salt, password=wholePassphrase.encode("utf-8")
         )
 
-    def prompt(self) -> bool:
-        correct = promptUser(
+    async def prompt(self, prompter: UserPrompter) -> bool:
+        correct = await prompter.promptUser(
             nextTime=self.nextPromptTime(),
             label=self.label,
             kdf=self.kdf,

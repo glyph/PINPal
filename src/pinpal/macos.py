@@ -1,22 +1,63 @@
 from __future__ import annotations
 
-from objc import object_property, IBOutlet
-from AppKit import NSApplication, NSNib, NSTableView, NSTableColumn
+from time import time
+
+from AppKit import NSApplication, NSNib, NSTableColumn, NSTableView
 from Foundation import NSObject
-from quickmacapp import Status, mainpoint  # , answer
-
-# from twisted.internet.defer import Deferred
-
-
+from objc import IBAction, IBOutlet, object_property
+from quickmacapp import Status, answer, getpass, mainpoint
+from twisted.internet.defer import Deferred
 from twisted.internet.interfaces import IReactorTime
 
-from .app import PinPalApp, DEFAULT_SERVICE_NAME
+from .app import DEFAULT_SERVICE_NAME, PinPalApp
+from .difficulty import SCryptParameters
 from .mem2 import Memorization2
+from .txtui import show
+
+
+class MacUserPrompter:
+    async def promptUser(
+        self,
+        *,
+        nextTime: float,
+        label: str,
+        kdf: SCryptParameters,
+        salt: bytes,
+        key: bytes,
+        separator: str,
+        knownTokens: list[str],
+        totalTokens: int,
+        hiddenTokens: int,
+        forgottenChar: str = "•",
+        hiddenChar: str = "°",
+        attempts: int = 4,
+    ) -> bool | None:
+        remaining = nextTime - time()
+        if remaining > 0:
+            await answer(f"next reminder for {label} in {int(remaining)} seconds")
+            return None
+        attempt = ""
+        for repetition in range(attempts):
+            reshow = show(
+                separator,
+                knownTokens,
+                totalTokens,
+                hiddenTokens,
+                forgottenChar,
+                hiddenChar,
+            )
+            userInput = await getpass(f"{label} (reminder: {reshow}){attempt}: ")
+            if userInput is None:
+                return False
+            attempt = f" (attempt {repetition + 2}/{attempts})"
+            if kdf.kdf(salt=salt, password=userInput.encode("utf-8")) == key:
+                return True
+        return False
 
 
 class MemorizationDataSource(NSObject):
     pinPalApp: PinPalApp = object_property()
-    selectedRow: NSObject = object_property()
+    selectedRow: NSObject | None = object_property()
     appOwner: PINPalAppOwner
     appOwner = IBOutlet()
 
@@ -24,9 +65,13 @@ class MemorizationDataSource(NSObject):
         self.pinPalApp = self.appOwner.pinPalApp
 
     def tableViewSelectionDidChange_(self, notification: NSObject) -> None:
-        self.selectedRow = self.tableView_objectValueForTableColumn_row_(
-            None, None, notification.object().selectedRowIndexes().firstIndex()
-        )
+        selectedRowIndexes = notification.object().selectedRowIndexes()
+        if selectedRowIndexes.count() == 0:
+            self.selectedRow = None
+        else:
+            self.selectedRow = self.tableView_objectValueForTableColumn_row_(
+                None, None, selectedRowIndexes.firstIndex()
+            )
 
     def numberOfRowsInTableView_(
         self,
@@ -49,6 +94,14 @@ class MemorizationDataSource(NSObject):
                 else item.successCount
             ),
         }
+
+    @IBAction
+    def rehearsal_(self, sender: NSObject) -> None:
+        macPrompter = MacUserPrompter()
+        async def rehearse() -> None:
+            for mem in self.pinPalApp.memorizations:
+                await mem.prompt(macPrompter)
+        Deferred.fromCoroutine(rehearse())
 
 
 class PINPalAppOwner(NSObject):

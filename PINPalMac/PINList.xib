@@ -150,6 +150,9 @@
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="rehearsal:" target="3HL-b1-t0v" id="nNc-BA-Nk6"/>
+                        </connections>
                     </button>
                     <button verticalHuggingPriority="750" id="RLa-uy-0HV">
                         <rect key="frame" x="41" y="11" width="23" height="21"/>

@@ -5,8 +5,10 @@ from secrets import token_bytes
 from time import time
 from typing import Any, Sequence
 
-from .difficulty import SCryptParameters, determineScryptParameters, sysrand, oldDefaultScryptParams
-from .txtui import promptUser
+from pinpal.uiboundary import UserPrompter
+
+from .difficulty import (SCryptParameters, determineScryptParameters,
+                         oldDefaultScryptParams, sysrand)
 
 
 @dataclass
@@ -96,8 +98,8 @@ class Memorization:
         )
         return self.separator.join(allTokens)
 
-    def prompt(self) -> bool:
-        correct = promptUser(
+    async def prompt(self, prompter: UserPrompter) -> bool:
+        correct = await prompter.promptUser(
             nextTime=self.nextPromptTime(),
             label=self.label,
             kdf=self.kdf,
