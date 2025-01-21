@@ -34,7 +34,7 @@ def main() -> None:
         doSelfTest()
 
     app = (
-        PinPalApp([])
+        PinPalApp.new()
         if (subCommand == "clear") or (maybeApp := PinPalApp.load()) is None
         else maybeApp
     )

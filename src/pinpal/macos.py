@@ -17,7 +17,7 @@ class MemorizationDataSource(NSObject):
     def awakeFromNib(self) -> None:
         loaded = PinPalApp.load()
         if loaded is None:
-            loaded = PinPalApp([])
+            loaded = PinPalApp.new()
         self.pinPalApp = loaded
 
     def tableViewSelectionDidChange_(self, notification: NSObject) -> None:
