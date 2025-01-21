@@ -12,7 +12,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="640" height="480"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="3840" height="1575"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="640" height="480"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
@@ -111,7 +111,7 @@
                             </subviews>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="WSu-iC-crK">
-                            <rect key="frame" x="1" y="343" width="640" height="16"/>
+                            <rect key="frame" x="1" y="422" width="640" height="16"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="SEJ-wk-APz">
@@ -163,11 +163,15 @@
             </view>
             <point key="canvasLocation" x="302" y="279.5"/>
         </window>
-        <customObject id="3HL-b1-t0v" userLabel="Memorization Data Source" customClass="MemorizationDataSource"/>
+        <customObject id="3HL-b1-t0v" userLabel="Memorization Data Source" customClass="MemorizationDataSource">
+            <connections>
+                <outlet property="appOwner" destination="-2" id="xlA-Vm-00h"/>
+            </connections>
+        </customObject>
         <userDefaultsController representsSharedInstance="YES" id="7F4-y6-Gbz"/>
     </objects>
     <resources>
-        <image name="NSAddTemplate" width="18" height="16"/>
-        <image name="NSRemoveTemplate" width="18" height="4"/>
+        <image name="NSAddTemplate" width="18" height="17"/>
+        <image name="NSRemoveTemplate" width="18" height="5"/>
     </resources>
 </document>
