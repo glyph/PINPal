@@ -41,7 +41,6 @@ def promptUser(
         attempt = f" (attempt {repetition + 2}/{attempts})"
         if kdf.kdf(salt=salt, password=userInput.encode("utf-8")) == key:
             return True
-        hiddenTokens = 0
     return False
 
 
