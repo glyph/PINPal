@@ -46,10 +46,10 @@ class MacUserPrompter:
                 forgottenChar,
                 hiddenChar,
             )
-            userInput = await getpass(f"{label} (reminder: {reshow}){attempt}: ")
+            userInput = await getpass(f"{label}{attempt}", f"{reshow}")
             if userInput is None:
                 return False
-            attempt = f" (attempt {repetition + 2}/{attempts})"
+            attempt = f"\n(attempt {repetition + 2}/{attempts})"
             if kdf.kdf(salt=salt, password=userInput.encode("utf-8")) == key:
                 return True
         return False
