@@ -14,6 +14,7 @@ from .mem2 import Memorization2
 timecache = expanduser("~/.pinpal-timestamp")
 
 DEFAULT_SERVICE_NAME = environ.get("PINPAL_KEYRING", "pinpal")
+DEFAULT_KEYRING = get_keyring()
 
 
 @dataclass
@@ -42,7 +43,7 @@ class PinPalApp:
 
     @classmethod
     def new(
-        cls, keyringServiceName: str = DEFAULT_SERVICE_NAME, backend=get_keyring()
+        cls, keyringServiceName: str = DEFAULT_SERVICE_NAME, backend=DEFAULT_KEYRING
     ) -> PinPalApp:
         """
         Construct a new, blank PinPalApp
@@ -51,7 +52,7 @@ class PinPalApp:
 
     @classmethod
     def load(
-        cls, keyringServiceName: str = DEFAULT_SERVICE_NAME, backend=get_keyring()
+        cls, keyringServiceName: str = DEFAULT_SERVICE_NAME, backend=DEFAULT_KEYRING
     ) -> PinPalApp | None:
         """
         Load it from somewhere persistent.
