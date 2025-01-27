@@ -3,7 +3,7 @@ from time import time
 
 from twisted.internet.defer import Deferred
 
-from .app import PinPalApp, load, timecache
+from .app import PinPalApp, loadSomeMemorization, timecache
 from .mem1 import Memorization
 from .mem2 import Memorization2
 from .txtui import TerminalUserPrompter
@@ -14,7 +14,7 @@ async def doSelfTest(p: TerminalUserPrompter) -> None:
 
     testing: Memorization2 | Memorization = Memorization2.new("testing")
     while True:
-        testing = load(loads(dumps(testing.tojson())))
+        testing = loadSomeMemorization(loads(dumps(testing.tojson())))
         await testing.prompt(p)
 
 
