@@ -60,12 +60,14 @@ class PinPalApp:
         if stored is None:
             return None
         self = PinPalApp(
-            [load(each) for each in loads(stored)], keyringServiceName, backend
+            [loadSomeMemorization(each) for each in loads(stored)],
+            keyringServiceName,
+            backend,
         )
         return self
 
 
-def load(x: dict[str, object]) -> Memorization | Memorization2:
+def loadSomeMemorization(x: dict[str, object]) -> Memorization | Memorization2:
     if "targetTokenCount" in x:
         return Memorization2.fromjson(x)
     else:
