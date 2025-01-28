@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from time import time
-
 from AppKit import NSApplication, NSNib, NSTableColumn, NSTableView
 from Foundation import NSObject
 from objc import IBAction, IBOutlet, object_property
@@ -10,49 +8,16 @@ from twisted.internet.defer import Deferred
 from twisted.internet.interfaces import IReactorTime
 
 from .app import DEFAULT_SERVICE_NAME, PinPalApp
-from .difficulty import SCryptParameters
 from .mem2 import Memorization2
-from .txtui import show
 
 
 class MacUserPrompter:
-    async def promptUser(
-        self,
-        *,
-        nextTime: float,
-        label: str,
-        kdf: SCryptParameters,
-        salt: bytes,
-        key: bytes,
-        separator: str,
-        knownTokens: list[str],
-        totalTokens: int,
-        hiddenTokens: int,
-        forgottenChar: str = "•",
-        hiddenChar: str = "°",
-        attempts: int = 4,
-    ) -> bool | None:
-        remaining = nextTime - time()
-        if remaining > 0:
-            await answer(f"next reminder for {label} in {int(remaining)} seconds")
-            return None
-        attempt = ""
-        for repetition in range(attempts):
-            reshow = show(
-                separator,
-                knownTokens,
-                totalTokens,
-                hiddenTokens,
-                forgottenChar,
-                hiddenChar,
-            )
-            userInput = await getpass(f"{label}{attempt}", f"{reshow}")
-            if userInput is None:
-                return False
-            attempt = f"\n(attempt {repetition + 2}/{attempts})"
-            if kdf.kdf(salt=salt, password=userInput.encode("utf-8")) == key:
-                return True
-        return False
+
+    async def askForPassword(self, question: str, reminder: str) -> str | None:
+        return await getpass(question, reminder)
+
+    async def tellUser(self, message: str) -> None:
+        await answer(message)
 
 
 class MemorizationDataSource(NSObject):
@@ -98,9 +63,12 @@ class MemorizationDataSource(NSObject):
     @IBAction
     def rehearsal_(self, sender: NSObject) -> None:
         macPrompter = MacUserPrompter()
+
         async def rehearse() -> None:
             for mem in self.pinPalApp.memorizations:
                 await mem.prompt(macPrompter)
+            self.pinPalApp.save()
+
         Deferred.fromCoroutine(rehearse())
 
 
@@ -118,8 +86,7 @@ class PINPalAppOwner(NSObject):
 
 def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     """
-    Run oldMain by default so I can keep using the app while I'm working on a
-    radical refactor of the object model in newMain.
+    Run main() normally, but if in a test-mode build, run testMain instead.
     """
     status = Status("🔑🦃🗝")
 

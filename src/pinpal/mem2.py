@@ -2,16 +2,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from getpass import getpass
 from secrets import token_bytes
 from time import time
 from typing import Any, Callable, Sequence
 
 from pinpal.uiboundary import UserPrompter
 
-from .difficulty import (SCryptParameters, determineScryptParameters,
-                         oldDefaultScryptParams, sysrand)
-from .txtui import show
+from .difficulty import (
+    SCryptParameters,
+    determineScryptParameters,
+    oldDefaultScryptParams,
+    sysrand,
+)
+from .txtui import show, promptUser
 
 
 @dataclass
@@ -183,7 +186,7 @@ class Memorization2:
         )
 
     @classmethod
-    def new(cls, label: str) -> Memorization2:
+    async def new(cls, label: str, prompter: UserPrompter) -> Memorization2:
         """
         Create a new passphrase to memorize.
         """
@@ -199,7 +202,7 @@ class Memorization2:
             maxKnown=3,
             kdf=determineScryptParameters(),
         )
-        self.generateOne()
+        await self.generateOne(prompter)
         return self
 
     def string(self) -> str:
@@ -242,7 +245,7 @@ class Memorization2:
                 return result
         return result
 
-    def generateOne(self) -> None:
+    async def generateOne(self, prompter: UserPrompter) -> None:
         """
         Generate one additional token.
         """
@@ -250,16 +253,18 @@ class Memorization2:
         if self.generatedCount > self.maxKnown:
             # we no longer remember the entire passphrase, but the key has to
             # represent the entire passphrase.
-            wholePassphrase = getpass(
-                "enter correctly to confirm: "
-                + show(
+            wholePassphrase = await prompter.askForPassword(
+                "enter password to confirm",
+                show(
                     self.tokenType.value.separator,
                     self.knownTokens + [chosen],
                     self.generatedCount + 1,
                     0,
                 )
-                + ": "
             )
+            if wholePassphrase is None:
+                await prompter.tellUser("No password provided.")
+                return
             tokens = self.tokenType.value.retokenize(wholePassphrase)
             newTokenMismatch = tokens[-1] != chosen
             oldTokenMismatch = (
@@ -289,7 +294,8 @@ class Memorization2:
         )
 
     async def prompt(self, prompter: UserPrompter) -> bool:
-        correct = await prompter.promptUser(
+        correct = await promptUser(
+            prompter,
             nextTime=self.nextPromptTime(),
             label=self.label,
             kdf=self.kdf,
@@ -298,7 +304,9 @@ class Memorization2:
             separator=self.tokenType.value.separator,
             knownTokens=self.knownTokens,
             totalTokens=self.generatedCount,
-            hiddenTokens=0 if not self.knownTokens else 1 if self.correctGuessCount() >= 2 else 0,
+            hiddenTokens=(
+                0 if not self.knownTokens else 1 if self.correctGuessCount() >= 2 else 0
+            ),
         )
         if correct is None:
             return False
@@ -306,20 +314,21 @@ class Memorization2:
             UserGuess(correct=correct, timestamp=time(), length=self.generatedCount)
         )
         if correct:
-            print("yay")
             guessesToGo = self.correctThreshold() - self.correctGuessCount()
             if guessesToGo > 0:
-                print(guessesToGo, "correct entries to go before leveling up")
+                await prompter.tellUser(
+                    f"{guessesToGo} correct entries to go before leveling up"
+                )
                 return correct
             if not self.knownTokens:
-                print("keep practicing!")
+                await prompter.tellUser("keep practicing!")
                 return correct
             if self.generatedCount < self.targetTokenCount:
-                print("leveling up")
-                self.generateOne()
+                await prompter.tellUser("leveling up")
+                await self.generateOne(prompter)
             else:
-                print("forgetting some more")
+                await prompter.tellUser("forgetting some more")
                 del self.knownTokens[0]
         else:
-            print("too bad")
+            await prompter.tellUser("passphrase incorrect")
         return correct

@@ -19,7 +19,7 @@ DEFAULT_KEYRING = get_keyring()
 
 @dataclass
 class PinPalApp:
-    memorizations: list[Memorization | Memorization2]
+    memorizations: list[Memorization2 | Memorization]
     keyringServiceName: str
     backend: KeyringBackend
 

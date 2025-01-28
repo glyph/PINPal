@@ -9,6 +9,7 @@ from pinpal.uiboundary import UserPrompter
 
 from .difficulty import (SCryptParameters, determineScryptParameters,
                          oldDefaultScryptParams, sysrand)
+from .txtui import promptUser
 
 
 @dataclass
@@ -99,7 +100,7 @@ class Memorization:
         return self.separator.join(allTokens)
 
     async def prompt(self, prompter: UserPrompter) -> bool:
-        correct = await prompter.promptUser(
+        correct = await promptUser(prompter,
             nextTime=self.nextPromptTime(),
             label=self.label,
             kdf=self.kdf,
