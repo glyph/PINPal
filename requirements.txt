@@ -4,6 +4,14 @@
 #
 #    pip-compile --allow-unsafe --constraint=./dev-requirements.txt --no-emit-index-url --strip-extras
 #
+datetype==2024.2.28
+    # via
+    #   -c ./dev-requirements.txt
+    #   fritter
+fritter==0.0.9
+    # via
+    #   -c ./dev-requirements.txt
+    #   pinpal (pyproject.toml)
 horsephrase==2022.12.9.1
     # via
     #   -c ./dev-requirements.txt
@@ -29,3 +37,7 @@ more-itertools==10.6.0
     #   -c ./dev-requirements.txt
     #   jaraco-classes
     #   jaraco-functools
+tzdata==2025.1
+    # via
+    #   -c ./dev-requirements.txt
+    #   fritter

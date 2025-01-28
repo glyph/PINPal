@@ -21,9 +21,13 @@ click==8.1.8
     #   pip-tools
 constantly==23.10.4
     # via twisted
+datetype==2024.2.28
+    # via fritter
 delocate==0.12.0
     # via encrust
 encrust==2025.1.28 ; sys_platform == "darwin"
+    # via pinpal (pyproject.toml)
+fritter==0.0.9
     # via pinpal (pyproject.toml)
 horsephrase==2022.12.9.1
     # via pinpal (pyproject.toml)
@@ -85,6 +89,8 @@ typing-extensions==4.12.2
     #   delocate
     #   mypy
     #   twisted
+tzdata==2025.1
+    # via fritter
 wheel==0.45.1
     # via pip-tools
 wheel-filename==1.4.2

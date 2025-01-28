@@ -1,7 +1,12 @@
 from __future__ import annotations
 
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 from AppKit import NSApplication, NSNib, NSTableColumn, NSTableView
+from datetype import aware
 from Foundation import NSObject
+from fritter.drivers.datetimes import guessLocalZone
 from objc import IBAction, IBOutlet, object_property
 from quickmacapp import Status, answer, getpass, mainpoint
 from twisted.internet.defer import Deferred
@@ -53,14 +58,16 @@ class MemorizationDataSource(NSObject):
         row: int,
     ) -> object:
         item = self.pinPalApp.memorizations[row]
+        zone = guessLocalZone()
+        dt = aware(datetime.fromtimestamp(item.nextPromptTime(), zone), ZoneInfo)
         return {
             "label": item.label,
             "guesses": str(
-                len(item.guesses)
+                item.correctGuessCount()
                 if isinstance(item, Memorization2)
                 else item.successCount
             ),
-            "nextPromptTime": str(item.nextPromptTime()),
+            "nextPromptTime": dt.isoformat(),
         }
 
     @IBAction
