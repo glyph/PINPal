@@ -14,7 +14,7 @@ anyio==4.8.0
     # via httpx
 appdirs==1.4.4
     # via twisted
-attrs==24.3.0
+attrs==25.1.0
     # via
     #   -c ./dev-requirements.txt
     #   hypothesis
@@ -54,19 +54,19 @@ horsephrase==2022.12.9.1
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   pinpal (pyproject.toml)
-hpack==4.0.0
+hpack==4.1.0
     # via h2
 httpcore==1.0.7
     # via httpx
 httpx==0.28.1
     # via twisted
-hyperframe==6.0.1
+hyperframe==6.1.0
     # via h2
 hyperlink==21.0.0
     # via
     #   -c ./dev-requirements.txt
     #   twisted
-hypothesis==6.124.2
+hypothesis==6.124.7
     # via twisted
 idna==3.10
     # via
