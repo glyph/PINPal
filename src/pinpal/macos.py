@@ -55,11 +55,12 @@ class MemorizationDataSource(NSObject):
         item = self.pinPalApp.memorizations[row]
         return {
             "label": item.label,
-            "guesses": (
+            "guesses": str(
                 len(item.guesses)
                 if isinstance(item, Memorization2)
                 else item.successCount
             ),
+            "nextPromptTime": str(item.nextPromptTime()),
         }
 
     @IBAction
