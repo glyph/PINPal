@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 from zoneinfo import ZoneInfo
 
 from AppKit import NSApplication, NSNib, NSTableColumn, NSTableView
@@ -8,7 +9,7 @@ from datetype import aware
 from Foundation import NSObject
 from fritter.drivers.datetimes import guessLocalZone
 from objc import IBAction, IBOutlet, object_property
-from quickmacapp import Status, answer, getpass, mainpoint
+from quickmacapp import Status, answer, ask, choose, getpass, mainpoint
 from twisted.internet.defer import Deferred
 from twisted.internet.interfaces import IReactorTime
 
@@ -28,6 +29,7 @@ class MacUserPrompter:
 class MemorizationDataSource(NSObject):
     pinPalApp: PinPalApp = object_property()
     selectedRow: NSObject | None = object_property()
+    selectedMemorization: Memorization2 | None = object_property()
     appOwner: PINPalAppOwner
     appOwner = IBOutlet()
     tableView: NSTableView
@@ -40,10 +42,13 @@ class MemorizationDataSource(NSObject):
         selectedRowIndexes = notification.object().selectedRowIndexes()
         if selectedRowIndexes.count() == 0:
             self.selectedRow = None
+            self.selectedMemorization = None
         else:
-            self.selectedRow = self.tableView_objectValueForTableColumn_row_(
+            it = self.tableView_objectValueForTableColumn_row_(
                 None, None, selectedRowIndexes.firstIndex()
             )
+            self.selectedRow = it
+            self.selectedMemorization = it["memorization"]
 
     def numberOfRowsInTableView_(
         self,
@@ -56,7 +61,7 @@ class MemorizationDataSource(NSObject):
         tableView: NSTableView,
         column: NSTableColumn,
         row: int,
-    ) -> object:
+    ) -> dict[str, Any]:
         item = self.pinPalApp.memorizations[row]
         zone = guessLocalZone()
         dt = aware(datetime.fromtimestamp(item.nextPromptTime(), zone), ZoneInfo)
@@ -68,6 +73,7 @@ class MemorizationDataSource(NSObject):
                 else item.successCount
             ),
             "nextPromptTime": dt.isoformat(),
+            "memorization": item,
         }
 
     @IBAction
@@ -81,6 +87,39 @@ class MemorizationDataSource(NSObject):
             self.tableView.reloadData()
 
         Deferred.fromCoroutine(rehearse())
+
+    @IBAction
+    def newMemorization_(self, sender: NSObject) -> None:
+        macPrompter = MacUserPrompter()
+
+        async def _() -> None:
+            self.pinPalApp.memorizations.append(
+                await Memorization2.new(
+                    await ask("What is the label for your new memorization?"),
+                    macPrompter,
+                )
+            )
+            self.tableView.reloadData()
+            self.pinPalApp.save()
+
+        Deferred.fromCoroutine(_())
+
+    @IBAction
+    def removeMemorization_(self, sender: NSObject) -> None:
+
+        async def _() -> None:
+            mem = self.selectedMemorization
+            assert mem is not None, "you have to select a memorization"
+            doIt = await choose(
+                [(False, "Nevermind"), (True, "Yes, Delete")],
+                "Really delete this memorization?",
+                f"“{mem.label}”",
+            )
+            if doIt:
+                self.pinPalApp.memorizations.remove(mem)
+                self.tableView.reloadData()
+
+        Deferred.fromCoroutine(_())
 
 
 class PINPalAppOwner(NSObject):
