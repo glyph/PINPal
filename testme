@@ -3,5 +3,6 @@
 mypy ./src;
 rm -fr ./dist/TestPINPal;
 export TEST_MODE=YES;
-python py2app_setup.py py2app --alias;
- ./dist/TestPINPal.app/Contents/MacOS/TestPINPal;
+# python py2app_setup.py py2app --alias;
+ENCRUST_APP_NAME=TestPINPal encrust build;
+./dist/TestPINPal.app/Contents/MacOS/TestPINPal;
