@@ -169,6 +169,7 @@
         <customObject id="3HL-b1-t0v" userLabel="Memorization Data Source" customClass="MemorizationDataSource">
             <connections>
                 <outlet property="appOwner" destination="-2" id="xlA-Vm-00h"/>
+                <outlet property="tableView" destination="pW6-YH-v2J" id="puP-Gx-KZ7"/>
             </connections>
         </customObject>
         <userDefaultsController representsSharedInstance="YES" id="7F4-y6-Gbz"/>

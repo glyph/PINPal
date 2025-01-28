@@ -25,6 +25,8 @@ class MemorizationDataSource(NSObject):
     selectedRow: NSObject | None = object_property()
     appOwner: PINPalAppOwner
     appOwner = IBOutlet()
+    tableView: NSTableView
+    tableView = IBOutlet()
 
     def awakeFromNib(self) -> None:
         self.pinPalApp = self.appOwner.pinPalApp
@@ -68,6 +70,7 @@ class MemorizationDataSource(NSObject):
             for mem in self.pinPalApp.memorizations:
                 await mem.prompt(macPrompter)
             self.pinPalApp.save()
+            self.tableView.reloadData()
 
         Deferred.fromCoroutine(rehearse())
 
