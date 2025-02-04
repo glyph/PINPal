@@ -104,7 +104,8 @@ class Memorization:
         return self.separator.join(allTokens)
 
     async def prompt(self, prompter: UserPrompter) -> bool:
-        correct = await promptUser(prompter,
+        correct = await promptUser(
+            prompter,
             nextTime=self.nextPromptTime(),
             label=self.label,
             kdf=self.kdf,
@@ -121,11 +122,13 @@ class Memorization:
         if correct:
             SUCCESS_THRESHOLD = 5
             self.successCount += 1
-            print(f"✅ Yay, correct {self.successCount}/{SUCCESS_THRESHOLD} times")
+            await prompter.tellUser(
+                f"✅ Yay, correct {self.successCount}/{SUCCESS_THRESHOLD} times"
+            )
             if self.successCount >= SUCCESS_THRESHOLD and self.remainingTokens:
                 self.tokensMemorized += 1
                 self.remainingTokens.pop(-1)
-                print("🎉 Level Up! 🎊")
+                await prompter.tellUser("🎉 Level Up! 🎊")
                 self.successCount = 0
             return True
         else:
