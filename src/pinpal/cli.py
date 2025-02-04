@@ -53,16 +53,16 @@ def main() -> None:
 
         elif subCommand == "list":
             for idx, mem in enumerate(app.memorizations):
-                print(f"{idx}: {mem.label} {'done' if mem.done else 'in-progress'}")
+                await prompter.tellUser(f"{idx}: {mem.label} {'done' if mem.done else 'in-progress'}")
 
         elif subCommand == "drop":
             for idx, mem in enumerate(app.memorizations):
-                print(f"{idx}: {mem.label}")
+                await prompter.tellUser(f"{idx}: {mem.label}")
             dropnum = input("Which number do you want to drop? ")
             dropidx = int(dropnum)
             if (input(f"Dropping {mem.label}, OK?")) == "yes":
                 del app.memorizations[dropidx]
-                print("OK, dropped.")
+                await prompter.tellUser("OK, dropped.")
 
         else:
 
