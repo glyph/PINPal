@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from secrets import token_bytes
-from time import time
+from time import time as _globalTime
 from typing import Any, Callable, Sequence
 
 from pinpal.uiboundary import UserPrompter
@@ -12,9 +12,9 @@ from .difficulty import (
     SCryptParameters,
     determineScryptParameters,
     oldDefaultScryptParams,
-    sysrand,
+    sysrand as _sysrand,
 )
-from .txtui import show, promptUser
+from .txtui import promptUser, show
 
 
 @dataclass
@@ -139,6 +139,17 @@ class Memorization2:
     The parameters for the KDF.
     """
 
+    _time: Callable[[], float] = field(default=_globalTime)
+    """
+    The source of wall-clock time as a POSIX timestamp.
+    """
+
+    _choice: Callable[[Sequence[str]], str] = _sysrand.choice
+    """
+    The source of randomness.  Really should only be specified by tests;
+    otherwise determinism (i.e. predictability) is deeply undesirable.
+    """
+
     @property
     def done(self) -> bool:
         """
@@ -219,7 +230,7 @@ class Memorization2:
         to be displayed.
         """
         if not self.guesses:
-            return time()
+            return self._time()
         else:
             return self.guesses[-1].timestamp + min(
                 86400, (90 * (1.4 ** self.correctGuessCount()))
@@ -249,7 +260,7 @@ class Memorization2:
         """
         Generate one additional token.
         """
-        chosen = sysrand.choice(self.tokenType.value.tokens())
+        chosen = self._choice(self.tokenType.value.tokens())
         if self.generatedCount > self.maxKnown:
             # we no longer remember the entire passphrase, but the key has to
             # represent the entire passphrase.
@@ -260,7 +271,7 @@ class Memorization2:
                     self.knownTokens + [chosen],
                     self.generatedCount + 1,
                     0,
-                )
+                ),
             )
             if wholePassphrase is None:
                 await prompter.tellUser("No password provided.")
@@ -311,7 +322,7 @@ class Memorization2:
         if correct is None:
             return False
         self.guesses.append(
-            UserGuess(correct=correct, timestamp=time(), length=self.generatedCount)
+            UserGuess(correct=correct, timestamp=self._time(), length=self.generatedCount)
         )
         if correct:
             guessesToGo = self.correctThreshold() - self.correctGuessCount()
