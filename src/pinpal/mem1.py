@@ -7,8 +7,12 @@ from typing import Any, Sequence
 
 from pinpal.uiboundary import UserPrompter
 
-from .difficulty import (SCryptParameters, determineScryptParameters,
-                         oldDefaultScryptParams, sysrand)
+from .difficulty import (
+    SCryptParameters,
+    determineScryptParameters,
+    oldDefaultScryptParams,
+    sysrand,
+)
 from .txtui import promptUser
 
 
