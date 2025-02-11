@@ -23,7 +23,7 @@ constantly==23.10.4
     # via twisted
 datetype==2024.2.28
     # via fritter
-delocate==0.12.0
+delocate==0.13.0
     # via encrust
 encrust==2025.1.28 ; sys_platform == "darwin"
     # via pinpal (pyproject.toml)
@@ -79,7 +79,9 @@ pyproject-hooks==1.2.0
     #   build
     #   pip-tools
 twisted==24.11.0
-    # via encrust
+    # via
+    #   encrust
+    #   pinpal (pyproject.toml)
 types-python-dateutil==2.9.0.20241206
     # via pinpal (pyproject.toml)
 types-python-xlib==0.33.0.20240407
@@ -106,7 +108,7 @@ zope-schema==7.0.1
     # via mypy-zope
 
 # The following packages are considered to be unsafe in a requirements file:
-pip==25.0
+pip==25.0.1
     # via pip-tools
 setuptools==70.3.0
     # via

@@ -4,6 +4,18 @@
 #
 #    pip-compile --allow-unsafe --constraint=./dev-requirements.txt --no-emit-index-url --strip-extras
 #
+attrs==25.1.0
+    # via
+    #   -c ./dev-requirements.txt
+    #   twisted
+automat==24.8.1
+    # via
+    #   -c ./dev-requirements.txt
+    #   twisted
+constantly==23.10.4
+    # via
+    #   -c ./dev-requirements.txt
+    #   twisted
 datetype==2024.2.28
     # via
     #   -c ./dev-requirements.txt
@@ -16,6 +28,18 @@ horsephrase==2022.12.9.1
     # via
     #   -c ./dev-requirements.txt
     #   pinpal (pyproject.toml)
+hyperlink==21.0.0
+    # via
+    #   -c ./dev-requirements.txt
+    #   twisted
+idna==3.10
+    # via
+    #   -c ./dev-requirements.txt
+    #   hyperlink
+incremental==24.7.2
+    # via
+    #   -c ./dev-requirements.txt
+    #   twisted
 jaraco-classes==3.4.0
     # via
     #   -c ./dev-requirements.txt
@@ -37,7 +61,26 @@ more-itertools==10.6.0
     #   -c ./dev-requirements.txt
     #   jaraco-classes
     #   jaraco-functools
+twisted==24.11.0
+    # via
+    #   -c ./dev-requirements.txt
+    #   pinpal (pyproject.toml)
+typing-extensions==4.12.2
+    # via
+    #   -c ./dev-requirements.txt
+    #   twisted
 tzdata==2025.1
     # via
     #   -c ./dev-requirements.txt
     #   fritter
+zope-interface==7.2
+    # via
+    #   -c ./dev-requirements.txt
+    #   twisted
+
+# The following packages are considered to be unsafe in a requirements file:
+setuptools==70.3.0
+    # via
+    #   -c ./dev-requirements.txt
+    #   incremental
+    #   zope-interface
