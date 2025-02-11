@@ -3,4 +3,4 @@ from unittest import main
 from pinpal.test import test_txtui
 
 if __name__ == "__main__":
-    main(module=test_txtui.__name__, verbosity=2)
+    main(module=test_txtui.__name__, verbosity=2, buffer=False)
