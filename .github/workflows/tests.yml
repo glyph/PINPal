@@ -26,8 +26,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -Ur macOS-gui.requirements.txt
-          pip install -Ur dev-requirements.txt
+          python -m pip install -Ur macOS-gui.requirements.txt
+          python -m pip install -Ur dev-requirements.txt
       - name: Check
         run: |
           mypy src
