@@ -4,11 +4,11 @@ from datetime import datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from AppKit import NSApplication, NSNib, NSTableColumn, NSTableView
+from AppKit import NSApplication, NSNib, NSTableColumn, NSTableView, NSEvent, NSMenu
 from datetype import aware
 from Foundation import NSObject
 from fritter.drivers.datetimes import guessLocalZone
-from objc import IBAction, IBOutlet, object_property
+from objc import IBAction, IBOutlet, object_property, super
 from quickmacapp import Status, answer, ask, choose, getpass, mainpoint
 from twisted.internet.defer import Deferred
 from twisted.internet.interfaces import IReactorTime
@@ -134,11 +134,35 @@ class PINPalAppOwner(NSObject):
         return self.init()
 
 
+class PINPalMacApplication(NSApplication):
+    mainMenu: NSMenu
+    mainMenu = IBOutlet()
+
+    statusMenu: NSMenu
+    statusMenu = IBOutlet()
+
+    def sendEvent_(self, event: NSEvent) -> None:
+        for menu in [self.statusMenu, self.myMenu]:
+            handled = menu.performKeyEquivalent_(event)
+            if handled:
+                return
+        super().sendEvent_(event)
+
+
 def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     """
     Run main() normally, but if in a test-mode build, run testMain instead.
     """
+    app: PINPalMacApplication = PINPalMacApplication.sharedApplication()
+
     status = Status("🔑🦃🗝")
+
+    app.statusMenu = status.menu
+    app.mainMenu = (
+        NSNib.alloc()
+        .initWithNibNamed_bundle_("MainMenu.nib", None)
+        .instantiateWithOwner_topLevelObjects_(app, None)
+    )
 
     serviceName = (
         DEFAULT_SERVICE_NAME if not testMode else f"testing.{DEFAULT_SERVICE_NAME}"
@@ -156,7 +180,7 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
         nibInstance.instantiateWithOwner_topLevelObjects_(owner, None)
 
     def bye() -> None:
-        NSApplication.sharedApplication().terminate_(owner)
+        app.terminate_(owner)
 
     sayHello()
     status.menu(
