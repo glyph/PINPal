@@ -1,3 +1,5 @@
+# -*- test-case-name: pinpal.test.test_mem2 -*-
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
