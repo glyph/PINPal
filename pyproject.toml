@@ -12,9 +12,10 @@ license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
 readme = "README.md"
 dependencies = [
-    "keyring",
-    "horsephrase",
-    "fritter",
+  "keyring",
+  "horsephrase",
+  "fritter",
+  "twisted",
 ]
 
 version = "2025.1.0"
