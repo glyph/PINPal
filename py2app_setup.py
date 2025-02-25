@@ -41,12 +41,14 @@ OPTIONS = {
     },
     "iconfile": f"{MODE}icon.icns",
     "app": APP,
+    "frameworks": [
+        expanduser(
+            "~/.local/firstparty/sparkle-project.org/Sparkle-2.6.4/Sparkle.framework"
+        ),
+    ],
 }
 
 setup(
     data_files=DATA_FILES,
     options={"py2app": OPTIONS},
-    frameworks=[
-        expanduser("~/.local/firstparty/sparkle-project.org/Sparkle-2.6.4/Sparkle.framework"),
-    ],
 )
