@@ -10,6 +10,7 @@
 		F096FB832D11FCF000778795 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		F096FB842D1201B700778795 /* PINList.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PINList.xib; sourceTree = "<group>"; };
 		F096FB852D12097800778795 /* macos.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = macos.py; path = ../src/pinpal/macos.py; sourceTree = SOURCE_ROOT; };
+		F0D2BB482D6E476D005585C0 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = "/Users/glyph/.local/firstparty/sparkle-project.org/Sparkle-2.6.4/Sparkle.framework"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -19,6 +20,7 @@
 				F096FB832D11FCF000778795 /* MainMenu.xib */,
 				F096FB842D1201B700778795 /* PINList.xib */,
 				F096FB852D12097800778795 /* macos.py */,
+				F0D2BB482D6E476D005585C0 /* Sparkle.framework */,
 			);
 			sourceTree = "<group>";
 		};
