@@ -7,6 +7,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="PINPalMacApplication"/>
+        <customObject id="3NZ-PW-g4d" customClass="SPUStandardUpdaterController"/>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
             <items>
@@ -662,6 +663,12 @@
                             <menuItem title="NewApplication Help" keyEquivalent="?" id="FKE-Sm-Kum">
                                 <connections>
                                     <action selector="showHelp:" target="-1" id="y7X-2Q-9no"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Chonk Foer Updaet?" id="8Rg-NK-cep" userLabel="Chonk Foer Updaet?">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="checkForUpdates:" target="3NZ-PW-g4d" id="ZQW-bz-Hy4"/>
                                 </connections>
                             </menuItem>
                         </items>
