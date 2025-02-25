@@ -33,6 +33,8 @@ OPTIONS = {
         "NSRequiresAquaSystemAppearance": False,
         "CFBundleIdentifier": f"im.glyph.and.this.is.{MODE}pinpal",
         "CFBundleName": f"{MODE}PINPal",
+        "SUPublicEDKey": "e4lwY+RAzYj1jgwjAqq6fIQJHpZVh/O2Od9aYSpY3CI=",
+        "SUFeedURL": "https://www.glyph.im/apps/pinpal/updates/appcast.xml",
     },
     "iconfile": f"{MODE}icon.icns",
     "app": APP,
