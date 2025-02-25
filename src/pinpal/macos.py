@@ -156,6 +156,12 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     """
     Run main() normally, but if in a test-mode build, run testMain instead.
     """
+    from objc import pathForFramework, loadBundle
+    sparklePath = pathForFramework("Sparkle.framework")
+    sparkleNS: dict[str, object] = {}
+    loadBundle('Sparkle', sparkleNS, bundle_path=sparklePath)
+    print(f"loaded: {sparkleNS}")
+
     app: PINPalMacApplication = PINPalMacApplication.sharedApplication()
 
     serviceName = (

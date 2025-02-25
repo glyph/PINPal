@@ -5,9 +5,10 @@ Usage:
     python py2app_setup.py py2app
 """
 
-import py2app
 import os
+from os.path import expanduser
 
+import py2app
 from setuptools import setup
 
 
@@ -46,6 +47,6 @@ setup(
     data_files=DATA_FILES,
     options={"py2app": OPTIONS},
     frameworks=[
-        "~/.local/firstparty/sparkle-project.org/Sparkle-2.6.4/Sparkle.framework",
+        expanduser("~/.local/firstparty/sparkle-project.org/Sparkle-2.6.4/Sparkle.framework"),
     ],
 )
