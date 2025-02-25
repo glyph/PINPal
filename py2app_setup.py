@@ -10,6 +10,7 @@ import os
 
 from setuptools import setup
 
+
 def check_mode() -> str:
     match os.environ:
         case {"CI_MODE": b}:
@@ -19,6 +20,7 @@ def check_mode() -> str:
             if b:
                 return "Test"
     return ""
+
 
 MODE = check_mode()
 
@@ -43,4 +45,7 @@ OPTIONS = {
 setup(
     data_files=DATA_FILES,
     options={"py2app": OPTIONS},
+    frameworks=[
+        "~/.local/firstparty/sparkle-project.org/Sparkle-2.6.4/Sparkle.framework",
+    ],
 )

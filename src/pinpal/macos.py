@@ -129,6 +129,9 @@ class PINPalAppOwner(NSObject):
 
     pinPalApp: PinPalApp
 
+    sparkleUpdaterController: NSObject
+    sparkleUpdaterController = IBOutlet()
+
     def initWithApp_(self, pinPalApp: PinPalApp) -> PINPalAppOwner:
         self.pinPalApp = pinPalApp
         return self.init()
@@ -155,25 +158,24 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     """
     app: PINPalMacApplication = PINPalMacApplication.sharedApplication()
 
-    status = Status("🔑🦃🗝")
+    serviceName = (
+        DEFAULT_SERVICE_NAME if not testMode else f"testing.{DEFAULT_SERVICE_NAME}"
+    )
 
-    app.statusMenu = status.menu
+    loaded = PinPalApp.load(serviceName)
+
+    if loaded is None:
+        loaded = PinPalApp.new(serviceName)
+
+    owner: PINPalAppOwner = PINPalAppOwner.alloc().initWithApp_(loaded)
+
     app.mainMenu = (
         NSNib.alloc()
         .initWithNibNamed_bundle_("MainMenu.nib", None)
         .instantiateWithOwner_topLevelObjects_(app, None)
     )
 
-    serviceName = (
-        DEFAULT_SERVICE_NAME if not testMode else f"testing.{DEFAULT_SERVICE_NAME}"
-    )
-
-    loaded = PinPalApp.load(serviceName)
-    if loaded is None:
-        loaded = PinPalApp.new(serviceName)
-
-    owner = PINPalAppOwner.alloc().initWithApp_(loaded)
-
+    status = Status("🔑🦃🗝")
     def sayHello() -> None:
         # Deferred.fromCoroutine(answer("hi"))
         nibInstance = NSNib.alloc().initWithNibNamed_bundle_("PINList.nib", None)
@@ -182,13 +184,18 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     def bye() -> None:
         app.terminate_(owner)
 
+    def checkForUpdates() -> None:
+        owner.sparkleUpdaterController.checkForUpdates_(app)
+
     sayHello()
     status.menu(
         [
             # ("Hello World", sayHello),
+            ("CFU", checkForUpdates),
             ("Quit", bye),
         ]
     )
+    app.statusMenu = status.item.menu()
 
 
 @mainpoint()
