@@ -12,7 +12,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="640" height="480"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1620" height="1055"/>
             <value key="minSize" type="size" width="640" height="480"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
@@ -102,7 +102,7 @@
                                                 </tableCellView>
                                             </prototypeCellViews>
                                         </tableColumn>
-                                        <tableColumn width="64" minWidth="10" maxWidth="3.4028234663852886e+38" id="MPj-pA-LwE" userLabel="Next Time Column">
+                                        <tableColumn width="100" minWidth="100" maxWidth="3.4028234663852886e+38" id="MPj-pA-LwE" userLabel="Next Time Column">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Next Time">
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -115,11 +115,11 @@
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
                                                 <tableCellView id="cBn-9f-Qc9" userLabel="Next Time CellView">
-                                                    <rect key="frame" x="436" y="0.0" width="61" height="17"/>
+                                                    <rect key="frame" x="436" y="0.0" width="97" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mQN-Kk-6IL" userLabel="Next Time ViewCell">
-                                                            <rect key="frame" x="0.0" y="1" width="61" height="16"/>
+                                                            <rect key="frame" x="0.0" y="1" width="97" height="16"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="czu-Rm-pdB">
                                                                 <font key="font" usesAppearanceFont="YES"/>

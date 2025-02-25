@@ -72,7 +72,7 @@ class MemorizationDataSource(NSObject):
                 if isinstance(item, Memorization2)
                 else item.successCount
             ),
-            "nextPromptTime": dt.isoformat(),
+            "nextPromptTime": dt.replace(microsecond=0, tzinfo=None).isoformat(sep=' '),
             "memorization": item,
         }
 
