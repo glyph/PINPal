@@ -157,14 +157,18 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     """
     Run main() normally, but if in a test-mode build, run testMain instead.
     """
+
+    # Ensure that the Sparkle framework is loaded before nib deserialization,
+    # so that the update controller can be instantiated by the nib machinery.
+    from objc import pathForFramework, loadBundle
     from AppKit import NSBundle
 
     b = NSBundle.mainBundle()
-    from objc import pathForFramework, loadBundle
     sparklePath = pathForFramework(os.path.join(b.privateFrameworksPath(), "Sparkle.framework"))
+
     sparkleNS: dict[str, object] = {}
     loadBundle('Sparkle', sparkleNS, bundle_path=sparklePath)
-    print(f"loaded: {sparkleNS}")
+    # Sparkle framework load complete.
 
     app: PINPalMacApplication = PINPalMacApplication.sharedApplication()
 
