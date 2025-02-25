@@ -186,7 +186,7 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     app.mainMenu = (
         NSNib.alloc()
         .initWithNibNamed_bundle_("MainMenu.nib", None)
-        .instantiateWithOwner_topLevelObjects_(app, None)
+        .instantiateWithOwner_topLevelObjects_(owner, None)
     )
 
     status = Status("🔑🦃🗝")

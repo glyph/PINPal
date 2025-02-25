@@ -669,8 +669,7 @@
                                     <action selector="showHelp:" target="-1" id="y7X-2Q-9no"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Chonk Foer Updaet?" id="8Rg-NK-cep" userLabel="Chonk Foer Updaet?">
-                                <modifierMask key="keyEquivalentModifierMask"/>
+                            <menuItem title="Chonk Foer Updaet?" keyEquivalent="j" id="8Rg-NK-cep" userLabel="Chonk Foer Updaet?">
                                 <connections>
                                     <action selector="checkForUpdates:" target="3NZ-PW-g4d" id="ZQW-bz-Hy4"/>
                                 </connections>
