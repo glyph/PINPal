@@ -205,7 +205,7 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     status.menu(
         [
             # ("Hello World", sayHello),
-            ("CFU", checkForUpdates),
+            ("Check for updates…", checkForUpdates),
             ("Quit", bye),
         ]
     )

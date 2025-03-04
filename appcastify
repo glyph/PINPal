@@ -2,8 +2,8 @@
 
 set -x;
 set -e;
-# rm -fr dist/;
-# encrust release;
+rm -fr dist/;
+encrust release;
 # NB: trailing slash important for rsync
 UPDATES_FOLDER="${HOME}/Storage/Sparkle/PINPal/Releases/";
 mv -n dist/*.release.app.zip "${UPDATES_FOLDER}";
