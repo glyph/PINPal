@@ -30,6 +30,10 @@ DATA_FILES = [
     "PINPalMac/MainMenu.xib",
     "PINPalMac/PINList.xib",
 ]
+
+# must be synced with version in ./getsparkle
+SPARKLE_VERSION="2.6.4"
+
 OPTIONS = {
     "plist": {
         "LSUIElement": True,
@@ -43,7 +47,7 @@ OPTIONS = {
     "app": APP,
     "frameworks": [
         expanduser(
-            "~/.local/firstparty/sparkle-project.org/Sparkle-2.6.4/Sparkle.framework"
+            f"~/.local/firstparty/sparkle-project.org/Sparkle-{SPARKLE_VERSION}/Sparkle.framework"
         ),
     ],
 }
