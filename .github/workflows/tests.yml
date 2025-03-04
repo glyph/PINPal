@@ -25,6 +25,7 @@ jobs:
           python-version: "3.12"
       - name: Install dependencies
         run: |
+          ./getsparkle
           python -m pip install --upgrade pip
           python -m pip install -Ur macOS-gui.requirements.txt
           python -m pip install -Ur dev-requirements.txt
