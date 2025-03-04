@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e;
+rm -fr dist/;
+encrust release;
+mv -n dist/*.release.app.zip ~/Storage/Sparkle/PINPal/Releases/;
+rsync -avz --delete \
+      ~/Storage/Sparkle/PINPal/Releases/ \
+      public.glyph.im:/site/www.glyph.im/apps/pinpal/updates/;
