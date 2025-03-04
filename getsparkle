@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Download the Sparkle framework and place it into a known location for both
+# development and CI purposes.
+
+mkdir -p ~/.local/firstparty/sparkle-project.org/;
+cd ~/.local/firstparty/sparkle-project.org/ || exit 1;
+SPARKLE_VERSION="2.6.4";
+SPARKLE_ARCHIVE="Sparkle-${SPARKLE_VERSION}.tar.xz";
+curl -LO "https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/${SPARKLE_ARCHIVE}";
+tar xf "${SPARKLE_ARCHIVE}";
