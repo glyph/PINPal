@@ -3,7 +3,16 @@
 set -e;
 rm -fr dist/;
 encrust release;
-mv -n dist/*.release.app.zip ~/Storage/Sparkle/PINPal/Releases/;
+# NB: trailing slash important for rsync
+UPDATES_FOLDER="${HOME}/Storage/Sparkle/PINPal/Releases/";
+mv -n dist/*.release.app.zip ;
+
+SPARKLE_VERSION="2.6.4";
+SPARKLE_QUALNAME="Sparkle-${SPARKLE_VERSION}";
+SPARKLE_VERSION_DIR="${HOME}/.local/firstparty/sparkle-project.org/${SPARKLE_QUALNAME}";
+
+"${SPARKLE_VERSION_DIR}/bin/generate_appcast" "${UPDATES_FOLDER}";
+
 rsync -avz --delete \
-      ~/Storage/Sparkle/PINPal/Releases/ \
+      "${UPDATES_FOLDER}" \
       public.glyph.im:/site/www.glyph.im/apps/pinpal/updates/;
