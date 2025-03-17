@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# thanks to
+# https://stackoverflow.com/questions/44506713/using-sips-to-create-an-icns-file-from-a-png-file
+# for the tip
+
+set -x;
+
+rm icon-resized.png icon.icns;
+sips -z 512 512 icon2.png --out icon-resized.png;
+sips -s format icns icon-resized.png --out icon.icns;

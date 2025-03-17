@@ -2,6 +2,7 @@
 
 mypy --config-file pyproject.toml ./src;
 rm -fr ./build ./dist;
-python py2app_setup.py py2app --alias;
+# python py2app_setup.py py2app --alias;
+encrust build;
 rm -fr ./build;
 exec ./dist/PINPal.app/Contents/MacOS/PINPal;

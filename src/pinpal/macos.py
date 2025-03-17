@@ -5,7 +5,15 @@ from datetime import datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from AppKit import NSApplication, NSNib, NSTableColumn, NSTableView, NSEvent, NSMenu
+from AppKit import (
+    NSApplication,
+    NSNib,
+    NSTableColumn,
+    NSTableView,
+    NSEvent,
+    NSMenu,
+    NSImage,
+)
 from datetype import aware
 from Foundation import NSObject
 from fritter.drivers.datetimes import guessLocalZone
@@ -73,7 +81,7 @@ class MemorizationDataSource(NSObject):
                 if isinstance(item, Memorization2)
                 else item.successCount
             ),
-            "nextPromptTime": dt.replace(microsecond=0, tzinfo=None).isoformat(sep=' '),
+            "nextPromptTime": dt.replace(microsecond=0, tzinfo=None).isoformat(sep=" "),
             "memorization": item,
         }
 
@@ -164,10 +172,12 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     from AppKit import NSBundle
 
     b = NSBundle.mainBundle()
-    sparklePath = pathForFramework(os.path.join(b.privateFrameworksPath(), "Sparkle.framework"))
+    sparklePath = pathForFramework(
+        os.path.join(b.privateFrameworksPath(), "Sparkle.framework")
+    )
 
     sparkleNS: dict[str, object] = {}
-    loadBundle('Sparkle', sparkleNS, bundle_path=sparklePath)
+    loadBundle("Sparkle", sparkleNS, bundle_path=sparklePath)
     # Sparkle framework load complete.
 
     app: PINPalMacApplication = PINPalMacApplication.sharedApplication()
@@ -189,7 +199,10 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
         .instantiateWithOwner_topLevelObjects_(owner, None)
     )
 
-    status = Status("🔑🦃🗝")
+    statusicon = NSImage.imageNamed_("statusicon.png")
+    statusicon.setTemplate_(True)
+    status = Status(image=statusicon)
+
     def sayHello() -> None:
         # Deferred.fromCoroutine(answer("hi"))
         nibInstance = NSNib.alloc().initWithNibNamed_bundle_("PINList.nib", None)

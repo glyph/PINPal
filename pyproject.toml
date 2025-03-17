@@ -70,5 +70,6 @@ module = [
   "objc",
   "Foundation",
   "AppKit",
+  "setuptools",
 ]
 
