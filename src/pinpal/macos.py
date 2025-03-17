@@ -200,6 +200,8 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     )
 
     statusicon = NSImage.imageNamed_("statusicon.png")
+    # a 'template' icon is one that is abstract black-only line-art that can
+    # adapt to dark/light mode
     statusicon.setTemplate_(True)
     status = Status(image=statusicon)
 
