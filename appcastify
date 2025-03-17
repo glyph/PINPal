@@ -12,6 +12,7 @@ SPARKLE_VERSION="2.6.4";
 SPARKLE_QUALNAME="Sparkle-${SPARKLE_VERSION}";
 SPARKLE_VERSION_DIR="${HOME}/.local/firstparty/sparkle-project.org/${SPARKLE_QUALNAME}";
 
+# generated with: "${SPARKLE_VERSION_DIR}/bin/generate_keys" --account 'im.glyph.and.this.is.my.sparkle.key'
 "${SPARKLE_VERSION_DIR}/bin/generate_appcast" \
     --account "im.glyph.and.this.is.my.sparkle.key" \
     "${UPDATES_FOLDER}";
