@@ -7,18 +7,19 @@ from zoneinfo import ZoneInfo
 
 from AppKit import (
     NSApplication,
+    NSEvent,
+    NSImage,
+    NSMenu,
     NSNib,
     NSTableColumn,
     NSTableView,
-    NSEvent,
-    NSMenu,
-    NSImage,
+    NSWindow,
 )
 from datetype import aware
 from Foundation import NSObject
 from fritter.drivers.datetimes import guessLocalZone
 from objc import IBAction, IBOutlet, object_property, super
-from quickmacapp import Status, answer, ask, choose, getpass, mainpoint
+from quickmacapp import Status, answer, ask, choose, getpass, mainpoint, dockIconWhenVisible
 from twisted.internet.defer import Deferred
 from twisted.internet.interfaces import IReactorTime
 
@@ -138,6 +139,9 @@ class PINPalAppOwner(NSObject):
 
     pinPalApp: PinPalApp
 
+    mainWindow: NSWindow
+    mainWindow = IBOutlet()
+
     sparkleUpdaterController: NSObject
     sparkleUpdaterController = IBOutlet()
 
@@ -168,8 +172,8 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
 
     # Ensure that the Sparkle framework is loaded before nib deserialization,
     # so that the update controller can be instantiated by the nib machinery.
-    from objc import pathForFramework, loadBundle
     from AppKit import NSBundle
+    from objc import loadBundle, pathForFramework
 
     b = NSBundle.mainBundle()
     sparklePath = pathForFramework(
@@ -205,10 +209,11 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     statusicon.setTemplate_(True)
     status = Status(image=statusicon)
 
-    def sayHello() -> None:
+    def createMainWindow() -> None:
         # Deferred.fromCoroutine(answer("hi"))
         nibInstance = NSNib.alloc().initWithNibNamed_bundle_("PINList.nib", None)
         nibInstance.instantiateWithOwner_topLevelObjects_(owner, None)
+        dockIconWhenVisible(owner.mainWindow, hideIconOnOtherSpaces=False)
 
     def bye() -> None:
         app.terminate_(owner)
@@ -216,7 +221,7 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     def checkForUpdates() -> None:
         owner.sparkleUpdaterController.checkForUpdates_(app)
 
-    sayHello()
+    createMainWindow()
     status.menu(
         [
             # ("Hello World", sayHello),
