@@ -80,7 +80,7 @@ hyperlink==21.0.0
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   twisted
-hypothesis==6.129.3
+hypothesis==6.129.4
     # via twisted
 idna==3.10
     # via
