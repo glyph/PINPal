@@ -1,13 +1,13 @@
 from pathlib import Path
 
 from encrust.api import AppDescription, SparkleData
-
+macFiles = Path("PINPalMac")
 description = AppDescription(
     bundleID="im.glyph.and.this.is.pinpal",
     bundleName="PINPal",
     icnsFile=Path("icon.icns"),
-    mainPythonScript=Path("PINPalMac/PINPal.pyw"),
-    dataFiles=list(Path("PINPalMac").glob("*.xib")),
+    mainPythonScript=macFiles / "PINPal.pyw",
+    dataFiles=[Path("statusicon.png"), *macFiles.glob("*.xib")],
     dockIconAtStart=False,
     sparkleData=SparkleData.withConfig(
         sparkleVersion="2.7.0",
