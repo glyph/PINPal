@@ -180,17 +180,18 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
 
     # Ensure that the Sparkle framework is loaded before nib deserialization,
     # so that the update controller can be instantiated by the nib machinery.
-    from AppKit import NSBundle
-    from objc import loadBundle, pathForFramework
+    from Foundation import NSBundle, NSLog
+    from objc import loadBundle
 
-    b = NSBundle.mainBundle()
-    sparklePath = pathForFramework(
-        os.path.join(b.privateFrameworksPath(), "Sparkle.framework")
-    )
-
-    sparkleNS: dict[str, object] = {}
-    loadBundle("Sparkle", sparkleNS, bundle_path=sparklePath)
-    # Sparkle framework load complete.
+    try:
+        loadBundle(
+            "Sparkle",
+            {},
+            bundle_path=NSBundle.mainBundle().privateFrameworksPath()
+            + "/Sparkle.framework",
+        )
+    except ImportError as ie:
+        NSLog("Could not load Sparkle framework: %@", ie)
 
     app: PINPalMacApplication = PINPalMacApplication.sharedApplication()
 
