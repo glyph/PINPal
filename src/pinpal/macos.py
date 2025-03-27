@@ -19,7 +19,15 @@ from datetype import aware
 from Foundation import NSObject
 from fritter.drivers.datetimes import guessLocalZone
 from objc import IBAction, IBOutlet, object_property, super
-from quickmacapp import Status, answer, ask, choose, getpass, mainpoint, dockIconWhenVisible
+from quickmacapp import (
+    Status,
+    answer,
+    ask,
+    choose,
+    getpass,
+    mainpoint,
+    dockIconWhenVisible,
+)
 from twisted.internet.defer import Deferred
 from twisted.internet.interfaces import IReactorTime
 
