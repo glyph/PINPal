@@ -25,7 +25,7 @@ datetype==2025.2.13
     # via fritter
 delocate==0.13.0
     # via encrust
-encrust==2025.3.18 ; sys_platform == "darwin"
+encrust==2025.4.4 ; sys_platform == "darwin"
     # via pinpal (pyproject.toml)
 fritter==0.0.9
     # via pinpal (pyproject.toml)
