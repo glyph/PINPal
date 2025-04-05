@@ -80,7 +80,7 @@ hyperlink==21.0.0
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   twisted
-hypothesis==6.129.4
+hypothesis==6.130.8
     # via twisted
 idna==3.10
     # via
@@ -143,7 +143,7 @@ pyasn1==0.6.1
     # via
     #   pyasn1-modules
     #   service-identity
-pyasn1-modules==0.4.1
+pyasn1-modules==0.4.2
     # via service-identity
 pycparser==2.22
     # via cffi
@@ -198,12 +198,12 @@ twisted==24.11.0
     #   -c ./requirements.txt
     #   pinpal (pyproject.toml)
     #   quickmacapp
-typing-extensions==4.12.2
+typing-extensions==4.13.1
     # via
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   twisted
-tzdata==2025.1
+tzdata==2025.2
     # via
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt

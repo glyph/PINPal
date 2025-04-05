@@ -65,11 +65,11 @@ twisted==24.11.0
     # via
     #   -c ./dev-requirements.txt
     #   pinpal (pyproject.toml)
-typing-extensions==4.12.2
+typing-extensions==4.13.1
     # via
     #   -c ./dev-requirements.txt
     #   twisted
-tzdata==2025.1
+tzdata==2025.2
     # via
     #   -c ./dev-requirements.txt
     #   fritter
