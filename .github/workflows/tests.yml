@@ -34,7 +34,7 @@ jobs:
           mypy src
       - name: Run Mac GUI tests
         run: |
-          CI_MODE=YES python py2app_setup.py py2app --alias | cat
+          CI_MODE=YES encrust devalias
           ./dist/CiPINPal.app/Contents/MacOS/CiPINPal
 
   model-tests:
