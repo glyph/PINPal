@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from uuid import uuid4
 
 from pinpal.difficulty import SCryptParameters
 from pinpal.mem2 import TokenType
@@ -30,6 +31,7 @@ class Mem2Tests(TestCase):
         key = kdf.kdf(salt=salt, password=b"too many")
         now = 1.0
         mem2 = Memorization2(
+            id=str(uuid4()),
             label="my label",
             targetTokenCount=3,
             knownTokens=["too", "many"],
@@ -40,6 +42,7 @@ class Mem2Tests(TestCase):
             kdf=kdf,
             guesses=[],
             maxKnown=2,
+            dirty=False,
             _time=lambda: now,
             _choice=lambda whatever: "secrets",
         )

@@ -7,6 +7,7 @@ from enum import Enum
 from secrets import token_bytes
 from time import time as _globalTime
 from typing import Any, Callable, Sequence
+from uuid import uuid4
 
 from pinpal.uiboundary import UserPrompter
 
@@ -14,8 +15,8 @@ from .difficulty import (
     SCryptParameters,
     determineScryptParameters,
     oldDefaultScryptParams,
-    sysrand as _sysrand,
 )
+from .difficulty import sysrand as _sysrand
 from .txtui import promptUser, show
 
 
@@ -87,6 +88,12 @@ class Memorization2:
           first token in the sequence.
     """
 
+    id: str
+    """
+    A durable identifier for this memorization; generated on-demand the first
+    time it is accessed; never changed thereafter.
+    """
+
     label: str
     """
     The name of this new token we're generating.
@@ -141,6 +148,12 @@ class Memorization2:
     The parameters for the KDF.
     """
 
+    dirty: bool
+    """
+    Does this memorization need to be saved?  (Currently only used during
+    loading to determine if IDs were generated.)
+    """
+
     _time: Callable[[], float] = field(default=_globalTime)
     """
     The source of wall-clock time as a POSIX timestamp.
@@ -168,6 +181,7 @@ class Memorization2:
         convert to json-serializable dict
         """
         return {
+            "id": self.id,
             "label": self.label,
             "targetTokenCount": str(self.targetTokenCount),
             "knownTokens": self.knownTokens,
@@ -185,7 +199,14 @@ class Memorization2:
         """
         convert from json-serializable dict
         """
+        if "id" in data:
+            idval = data["id"]
+            dirty = False
+        else:
+            idval = str(uuid4())
+            dirty = True
         return cls(
+            id=idval,
             label=data["label"],
             targetTokenCount=int(data["targetTokenCount"]),
             knownTokens=data["knownTokens"],
@@ -196,6 +217,7 @@ class Memorization2:
             guesses=[UserGuess.fromjson(each) for each in data["guesses"]],
             maxKnown=int(data["maxKnown"]),
             kdf=SCryptParameters.fromjson(data.get("kdf", oldDefaultScryptParams)),
+            dirty=dirty,
         )
 
     @classmethod
@@ -204,6 +226,7 @@ class Memorization2:
         Create a new passphrase to memorize.
         """
         self = cls(
+            id=str(uuid4()),
             label=label,
             targetTokenCount=5,
             knownTokens=[],
@@ -214,6 +237,7 @@ class Memorization2:
             guesses=[],
             maxKnown=3,
             kdf=determineScryptParameters(),
+            dirty=False,
         )
         await self.generateOne(prompter)
         return self
@@ -324,7 +348,9 @@ class Memorization2:
         if correct is None:
             return False
         self.guesses.append(
-            UserGuess(correct=correct, timestamp=self._time(), length=self.generatedCount)
+            UserGuess(
+                correct=correct, timestamp=self._time(), length=self.generatedCount
+            )
         )
         if correct:
             guessesToGo = self.correctThreshold() - self.correctGuessCount()

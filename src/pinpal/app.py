@@ -65,6 +65,8 @@ class PinPalApp:
             keyringServiceName,
             backend,
         )
+        if any(memorization.dirty for memorization in self.memorizations):
+            self.save()
         return self
 
 

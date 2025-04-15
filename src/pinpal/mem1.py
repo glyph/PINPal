@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from secrets import token_bytes
 from time import time
 from typing import Any, Sequence
+from uuid import uuid4
 
 from pinpal.uiboundary import UserPrompter
 
@@ -20,6 +21,12 @@ from .txtui import promptUser
 class Memorization:
     """
     A PIN or password whose memorization is in progress
+    """
+
+    id: str
+    """
+    A durable identifier for this memorization; generated on-demand the first
+    time it is accessed; never changed thereafter.
     """
 
     label: str
@@ -61,6 +68,12 @@ class Memorization:
 
     kdf: SCryptParameters
 
+    dirty: bool
+    """
+    Does this memorization need to be saved?  (Currently only used during
+    loading to determine if IDs were generated.)
+    """
+
     @property
     def done(self) -> bool:
         return len(self.remainingTokens) == 0
@@ -91,6 +104,8 @@ class Memorization:
             key=key,
             kdf=kdf,
             entryTimes=[],
+            id=str(uuid4()),
+            dirty=False,
         )
 
     def string(self) -> str:
@@ -141,6 +156,7 @@ class Memorization:
         convert to json-serializable dict
         """
         return {
+            "id": self.id,
             "label": self.label,
             "remainingTokens": self.remainingTokens,
             "tokensMemorized": self.tokensMemorized,
@@ -157,7 +173,14 @@ class Memorization:
         """
         convert from json-serializable dict
         """
+        if "id" in data:
+            idval = data["id"]
+            dirty = False
+        else:
+            idval = str(uuid4())
+            dirty = True
         return Memorization(
+            id=idval,
             label=data["label"],
             remainingTokens=data["remainingTokens"],
             tokensMemorized=data["tokensMemorized"],
@@ -167,6 +190,7 @@ class Memorization:
             key=bytes.fromhex(data["key"]),
             entryTimes=data["entryTimes"],
             kdf=SCryptParameters.fromjson(data.get("kdf", oldDefaultScryptParams)),
+            dirty=dirty,
         )
 
     def nextPromptTime(self) -> float:
