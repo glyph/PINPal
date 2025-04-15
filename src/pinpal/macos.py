@@ -1,37 +1,24 @@
 from __future__ import annotations
 
-import os
-from datetime import datetime
+from dataclasses import dataclass
+from datetime import datetime, timedelta
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from AppKit import (
-    NSApplication,
-    NSEvent,
-    NSImage,
-    NSMenu,
-    NSNib,
-    NSTableColumn,
-    NSTableView,
-    NSWindow,
-)
+from AppKit import (NSApplication, NSEvent, NSImage, NSMenu, NSNib,
+                    NSTableColumn, NSTableView, NSWindow)
 from datetype import aware
-from Foundation import NSObject
+from Foundation import NSIndexSet, NSObject
 from fritter.drivers.datetimes import guessLocalZone
 from objc import IBAction, IBOutlet, object_property, super
-from quickmacapp import (
-    Status,
-    answer,
-    ask,
-    choose,
-    getpass,
-    mainpoint,
-    dockIconWhenVisible,
-)
+from quickmacapp import (Status, answer, ask, choose, dockIconWhenVisible,
+                         getpass, mainpoint)
+from quickmacapp.notifications import configureNotifications, response
 from twisted.internet.defer import Deferred
 from twisted.internet.interfaces import IReactorTime
 
 from .app import DEFAULT_SERVICE_NAME, PinPalApp
+from .mem1 import Memorization
 from .mem2 import Memorization2
 
 
@@ -55,6 +42,7 @@ class MemorizationDataSource(NSObject):
 
     def awakeFromNib(self) -> None:
         self.pinPalApp = self.appOwner.pinPalApp
+        self.appOwner.memoDataSource = self
 
     def tableViewSelectionDidChange_(self, notification: NSObject) -> None:
         selectedRowIndexes = notification.object().selectedRowIndexes()
@@ -153,6 +141,8 @@ class PINPalAppOwner(NSObject):
     sparkleUpdaterController: NSObject
     sparkleUpdaterController = IBOutlet()
 
+    memoDataSource: MemorizationDataSource = object_property()
+
     def initWithApp_(self, pinPalApp: PinPalApp) -> PINPalAppOwner:
         self.pinPalApp = pinPalApp
         return self.init()
@@ -171,6 +161,56 @@ class PINPalMacApplication(NSApplication):
             if handled:
                 return
         super().sendEvent_(event)
+
+
+@dataclass
+class TimeToRehearse:
+    """
+    Notification category for it being time to rehearse a particular
+    memorization.
+    """
+
+    memorization: Memorization | Memorization2
+    source: MemorizationDataSource
+
+    @response.default()
+    async def defaulted(self) -> None:
+        from AppKit import NSApp
+
+        NSApp().activate()
+        desiredIndex = next(
+            index
+            for (index, memorization) in enumerate(
+                self.source.appOwner.pinPalApp.memorizations
+            )
+            if memorization == self.memorization
+        )
+        self.source.tableView.selectRowIndexes_byExtendingSelection_(
+            NSIndexSet.indexSetWithIndex_(desiredIndex), False
+        )
+
+
+@dataclass
+class RehearseNotificationTranslator:
+    """
+    Translate L{TimeToRehearse} notifications.
+    """
+
+    app: PinPalApp
+    source: MemorizationDataSource
+
+    def fromNotification(
+        self, notificationID: str, userData: dict[str, list[str]]
+    ) -> TimeToRehearse:
+        memoID = notificationID.split(".")[1]
+        memo = next((each for each in self.app.memorizations if each.id == memoID))
+        # TODO: what should we do if the referenced memorization no longer exists?
+        return TimeToRehearse(memo, self.source)
+
+    def toNotification(
+        self, notification: TimeToRehearse
+    ) -> tuple[str, dict[str, list[str]]]:
+        return (f"rehearse.{notification.memorization.id}", {})
 
 
 def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
@@ -239,6 +279,31 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
         ]
     )
     app.statusMenu = status.item.menu()
+
+    async def doNotificationSetup() -> None:
+        async with configureNotifications() as n:
+            rehearsalNotifier = n.add(
+                TimeToRehearse,
+                RehearseNotificationTranslator(loaded, owner.memoDataSource),
+            )
+        zone = guessLocalZone()
+        now = aware(datetime.now(zone), ZoneInfo)
+        for memorization in loaded.memorizations:
+            when = aware(datetime.fromtimestamp(memorization.nextPromptTime(), zone), ZoneInfo)
+            if when > now:
+                rehearsalNotifier.undeliver(TimeToRehearse(memorization, owner.memoDataSource))
+                NSLog("Scheduling <%@> reminder notification at <%@>", memorization.label, when)
+                await rehearsalNotifier.notifyAt(
+                    when,
+                    TimeToRehearse(memorization, owner.memoDataSource),
+                    f"Time To Rehearse “{memorization.label}”",
+                    "Blah blah blah",
+                )
+            else:
+                NSLog("Not touching <%@> reminder notification from the past at <%@>", memorization.label, when)
+
+
+    Deferred.fromCoroutine(doNotificationSetup())
 
 
 @mainpoint()
