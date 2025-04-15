@@ -65,7 +65,7 @@ twisted==24.11.0
     # via
     #   -c ./dev-requirements.txt
     #   pinpal (pyproject.toml)
-typing-extensions==4.13.1
+typing-extensions==4.13.2
     # via
     #   -c ./dev-requirements.txt
     #   twisted
