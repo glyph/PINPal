@@ -1,18 +1,34 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from AppKit import (NSApplication, NSEvent, NSImage, NSMenu, NSNib,
-                    NSTableColumn, NSTableView, NSWindow)
+from AppKit import (
+    NSApplication,
+    NSApplicationActivationPolicyRegular,
+    NSEvent,
+    NSImage,
+    NSMenu,
+    NSNib,
+    NSTableColumn,
+    NSTableView,
+    NSWindow,
+)
 from datetype import aware
 from Foundation import NSIndexSet, NSObject
 from fritter.drivers.datetimes import guessLocalZone
 from objc import IBAction, IBOutlet, object_property, super
-from quickmacapp import (Status, answer, ask, choose, dockIconWhenVisible,
-                         getpass, mainpoint)
+from quickmacapp import (
+    Status,
+    answer,
+    ask,
+    choose,
+    dockIconWhenVisible,
+    getpass,
+    mainpoint,
+)
 from quickmacapp.notifications import configureNotifications, response
 from twisted.internet.defer import Deferred
 from twisted.internet.interfaces import IReactorTime
