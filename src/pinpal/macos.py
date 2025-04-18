@@ -279,7 +279,10 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
         nibInstance = NSNib.alloc().initWithNibNamed_bundle_("PINList.nib", None)
         nibInstance.instantiateWithOwner_topLevelObjects_(owner, None)
         dockIconWhenVisible(owner.mainWindow, hideIconOnOtherSpaces=False)
+        app = NSApplication.sharedApplication()
+        app.setActivationPolicy_(NSApplicationActivationPolicyRegular)
         owner.mainWindow.makeMainWindow()
+        owner.mainWindow.makeKeyWindow()
 
     def bye() -> None:
         app.terminate_(owner)
@@ -306,10 +309,18 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
         zone = guessLocalZone()
         now = aware(datetime.now(zone), ZoneInfo)
         for memorization in loaded.memorizations:
-            when = aware(datetime.fromtimestamp(memorization.nextPromptTime(), zone), ZoneInfo)
+            when = aware(
+                datetime.fromtimestamp(memorization.nextPromptTime(), zone), ZoneInfo
+            )
             if when > now:
-                rehearsalNotifier.undeliver(TimeToRehearse(memorization, owner.memoDataSource))
-                NSLog("Scheduling <%@> reminder notification at <%@>", memorization.label, str(when))
+                rehearsalNotifier.undeliver(
+                    TimeToRehearse(memorization, owner.memoDataSource)
+                )
+                NSLog(
+                    "Scheduling <%@> reminder notification at <%@>",
+                    memorization.label,
+                    str(when),
+                )
                 await rehearsalNotifier.notifyAt(
                     when,
                     TimeToRehearse(memorization, owner.memoDataSource),
@@ -317,8 +328,11 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
                     "Blah blah blah",
                 )
             else:
-                NSLog("Not touching <%@> reminder notification from the past at <%@>", memorization.label, when)
-
+                NSLog(
+                    "Not touching <%@> reminder notification from the past at <%@>",
+                    memorization.label,
+                    when,
+                )
 
     Deferred.fromCoroutine(doNotificationSetup())
 
