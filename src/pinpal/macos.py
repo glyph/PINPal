@@ -263,6 +263,7 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
         nibInstance = NSNib.alloc().initWithNibNamed_bundle_("PINList.nib", None)
         nibInstance.instantiateWithOwner_topLevelObjects_(owner, None)
         dockIconWhenVisible(owner.mainWindow, hideIconOnOtherSpaces=False)
+        owner.mainWindow.makeMainWindow()
 
     def bye() -> None:
         app.terminate_(owner)
