@@ -292,7 +292,7 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
             when = aware(datetime.fromtimestamp(memorization.nextPromptTime(), zone), ZoneInfo)
             if when > now:
                 rehearsalNotifier.undeliver(TimeToRehearse(memorization, owner.memoDataSource))
-                NSLog("Scheduling <%@> reminder notification at <%@>", memorization.label, when)
+                NSLog("Scheduling <%@> reminder notification at <%@>", memorization.label, str(when))
                 await rehearsalNotifier.notifyAt(
                     when,
                     TimeToRehearse(memorization, owner.memoDataSource),
