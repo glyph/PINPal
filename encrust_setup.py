@@ -8,7 +8,7 @@ description = AppDescription(
     icnsFile=Path("icon.icns"),
     mainPythonScript=macFiles / "PINPal.pyw",
     dataFiles=[Path("statusicon.png"), *macFiles.glob("*.xib")],
-    dockIconAtStart=False,
+    dockIconAtStart=True,
     sparkleData=SparkleData.withConfig(
         sparkleVersion="2.7.0",
         publicEDKey="e4lwY+RAzYj1jgwjAqq6fIQJHpZVh/O2Od9aYSpY3CI=",

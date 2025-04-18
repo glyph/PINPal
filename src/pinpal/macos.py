@@ -279,10 +279,11 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
         nibInstance = NSNib.alloc().initWithNibNamed_bundle_("PINList.nib", None)
         nibInstance.instantiateWithOwner_topLevelObjects_(owner, None)
         dockIconWhenVisible(owner.mainWindow, hideIconOnOtherSpaces=False)
-        app = NSApplication.sharedApplication()
-        app.setActivationPolicy_(NSApplicationActivationPolicyRegular)
         owner.mainWindow.makeMainWindow()
         owner.mainWindow.makeKeyWindow()
+        app = NSApplication.sharedApplication()
+        app.setActivationPolicy_(NSApplicationActivationPolicyRegular)
+        app.activate()
 
     def bye() -> None:
         app.terminate_(owner)
