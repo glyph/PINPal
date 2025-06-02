@@ -18,14 +18,14 @@
             <rect key="contentRect" x="196" y="240" width="640" height="480"/>
             <rect key="screenRect" x="0.0" y="0.0" width="3840" height="1575"/>
             <value key="minSize" type="size" width="640" height="480"/>
-            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
+            <visualEffectView key="contentView" wantsLayer="YES" blendingMode="behindWindow" material="underWindowBackground" state="followsWindowActiveState" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="17" horizontalPageScroll="10" verticalLineScroll="17" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vre-b3-AEc">
                         <rect key="frame" x="0.0" y="42" width="642" height="439"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <clipView key="contentView" id="nV8-k0-0aP">
+                        <clipView key="contentView" drawsBackground="NO" id="nV8-k0-0aP">
                             <rect key="frame" x="1" y="1" width="640" height="437"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
@@ -33,7 +33,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="640" height="409"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="17" height="0.0"/>
-                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" red="0.11764705882352941" green="0.11764705882352941" blue="0.11764705882352941" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
                                         <tableColumn identifier="AutomaticTableColumnIdentifier.0" width="300" minWidth="40" maxWidth="1000" id="vpL-Ac-BUN">
@@ -148,6 +148,7 @@
                                     </connections>
                                 </tableView>
                             </subviews>
+                            <nil key="backgroundColor"/>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="WSu-iC-crK">
                             <rect key="frame" x="1" y="422" width="640" height="16"/>
@@ -174,7 +175,7 @@
                             <binding destination="3HL-b1-t0v" name="value" keyPath="self.selectedRow.label" id="nkU-D4-yJl"/>
                         </connections>
                     </textField>
-                    <button verticalHuggingPriority="750" id="qO1-70-LfX">
+                    <button wantsLayer="YES" verticalHuggingPriority="750" id="qO1-70-LfX">
                         <rect key="frame" x="12" y="11" width="21" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MH4-yc-yEw">
@@ -185,7 +186,7 @@
                             <action selector="newMemorization:" target="3HL-b1-t0v" id="4cF-s7-Zph"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uah-w7-sOy">
+                    <button wantsLayer="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uah-w7-sOy">
                         <rect key="frame" x="499" y="5" width="128" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="push" title="Rehearse" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="j5m-S9-ZG9">
@@ -196,7 +197,7 @@
                             <action selector="rehearsal:" target="3HL-b1-t0v" id="nNc-BA-Nk6"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" id="RLa-uy-0HV">
+                    <button wantsLayer="YES" verticalHuggingPriority="750" id="RLa-uy-0HV">
                         <rect key="frame" x="41" y="11" width="23" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3g9-ST-IUd">
@@ -208,7 +209,7 @@
                         </connections>
                     </button>
                 </subviews>
-            </view>
+            </visualEffectView>
             <point key="canvasLocation" x="302" y="279.5"/>
         </window>
         <customObject id="3HL-b1-t0v" userLabel="Memorization Data Source" customClass="MemorizationDataSource">
