@@ -11,11 +11,11 @@ altgraph==0.17.4
     #   py2app
 attrs==25.3.0
     # via twisted
-automat==24.8.1
+automat==25.4.16
     # via twisted
 build==1.2.2.post1
     # via pip-tools
-click==8.1.8
+click==8.2.1
     # via
     #   encrust
     #   pip-tools
@@ -51,23 +51,25 @@ macholib==1.16.3
     #   py2app
 modulegraph==0.19.6
     # via py2app
-more-itertools==10.6.0
+more-itertools==10.7.0
     # via
     #   jaraco-classes
     #   jaraco-functools
-mypy==1.15.0
+mypy==1.16.0
     # via
     #   mypy-zope
     #   pinpal (pyproject.toml)
-mypy-extensions==1.0.0
+mypy-extensions==1.1.0
     # via mypy
-mypy-zope==1.0.11
+mypy-zope==1.0.12
     # via pinpal (pyproject.toml)
-packaging==24.2
+packaging==25.0
     # via
     #   build
     #   delocate
     #   py2app
+pathspec==0.12.1
+    # via mypy
 pip-tools==7.4.1
     # via pinpal (pyproject.toml)
 py2app==0.28.8
@@ -82,11 +84,11 @@ twisted==24.11.0
     # via
     #   encrust
     #   pinpal (pyproject.toml)
-types-python-dateutil==2.9.0.20241206
+types-python-dateutil==2.9.0.20250516
     # via pinpal (pyproject.toml)
-types-python-xlib==0.33.0.20240407
+types-python-xlib==0.33.0.20250602
     # via pinpal (pyproject.toml)
-typing-extensions==4.13.2
+typing-extensions==4.14.0
     # via
     #   delocate
     #   mypy
@@ -108,7 +110,7 @@ zope-schema==7.0.1
     # via mypy-zope
 
 # The following packages are considered to be unsafe in a requirements file:
-pip==25.0.1
+pip==25.1.1
     # via pip-tools
 setuptools==70.3.0
     # via

@@ -21,14 +21,14 @@ attrs==25.3.0
     #   hypothesis
     #   service-identity
     #   twisted
-automat==24.8.1
+automat==25.4.16
     # via
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   twisted
 bcrypt==4.3.0
     # via twisted
-certifi==2025.1.31
+certifi==2025.4.26
     # via
     #   httpcore
     #   httpx
@@ -39,7 +39,7 @@ constantly==23.10.4
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   twisted
-cryptography==44.0.2
+cryptography==45.0.3
     # via
     #   pyopenssl
     #   service-identity
@@ -57,7 +57,7 @@ fritter==0.0.9
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   pinpal (pyproject.toml)
-h11==0.14.0
+h11==0.16.0
     # via httpcore
 h2==4.2.0
     # via
@@ -70,7 +70,7 @@ horsephrase==2022.12.9.1
     #   pinpal (pyproject.toml)
 hpack==4.1.0
     # via h2
-httpcore==1.0.8
+httpcore==1.0.9
     # via httpx
 httpx==0.28.1
     # via twisted
@@ -81,7 +81,7 @@ hyperlink==21.0.0
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   twisted
-hypothesis==6.131.0
+hypothesis==6.135.0
     # via twisted
 idna==3.10
     # via
@@ -124,13 +124,13 @@ modulegraph==0.19.6
     # via
     #   -c ./dev-requirements.txt
     #   py2app
-more-itertools==10.6.0
+more-itertools==10.7.0
     # via
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   jaraco-classes
     #   jaraco-functools
-packaging==24.2
+packaging==25.0
     # via
     #   -c ./dev-requirements.txt
     #   py2app
@@ -179,7 +179,7 @@ pyobjc-framework-usernotifications==11.0 ; sys_platform == "darwin"
     # via
     #   pinpal (pyproject.toml)
     #   quickmacapp
-pyopenssl==25.0.0
+pyopenssl==25.1.0
     # via twisted
 pyserial==3.5
     # via twisted
@@ -199,7 +199,7 @@ twisted==24.11.0
     #   -c ./requirements.txt
     #   pinpal (pyproject.toml)
     #   quickmacapp
-typing-extensions==4.13.2
+typing-extensions==4.14.0
     # via
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
