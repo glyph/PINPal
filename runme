@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 mypy --config-file pyproject.toml ./src;
-rm -fr ./build ./dist;
+rm -fr ./build ./dist/PINPal.app;
 # python py2app_setup.py py2app --alias;
 encrust build;
 rm -fr ./build;
