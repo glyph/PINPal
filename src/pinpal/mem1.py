@@ -1,20 +1,19 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from secrets import token_bytes
 from time import time
-from typing import Any, Sequence
+from typing import TYPE_CHECKING, Any, Sequence
 from uuid import uuid4
 
 from pinpal.uiboundary import UserPrompter
 
-from .difficulty import (
-    SCryptParameters,
-    determineScryptParameters,
-    oldDefaultScryptParams,
-    sysrand,
-)
+from .difficulty import (SCryptParameters, determineScryptParameters,
+                         oldDefaultScryptParams, sysrand)
 from .txtui import promptUser
+
+if TYPE_CHECKING:
+    from .app import MemChange
 
 
 @dataclass
@@ -73,6 +72,10 @@ class Memorization:
     Does this memorization need to be saved?  (Currently only used during
     loading to determine if IDs were generated.)
     """
+    _changeCallback: MemChange = field(default=lambda me: None)
+
+    def whenMemorizationChanges(self, newCallback: MemChange) -> None:
+        self._changeCallback = newCallback
 
     @property
     def done(self) -> bool:
@@ -134,6 +137,7 @@ class Memorization:
         if correct is None:
             return False
         self.entryTimes.append((time(), correct))
+        self._changeCallback(self)
         if correct:
             SUCCESS_THRESHOLD = 5
             self.successCount += 1

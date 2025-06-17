@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from json import dumps, loads
 from os import environ
 from os.path import expanduser
+from typing import Callable, Sequence, TypeAlias
 
 from keyring import get_keyring
 from keyring.backend import KeyringBackend
@@ -16,12 +17,34 @@ timecache = expanduser("~/.pinpal-timestamp")
 DEFAULT_SERVICE_NAME = environ.get("PINPAL_KEYRING", "pinpal")
 DEFAULT_KEYRING = get_keyring()
 
+MemChange: TypeAlias = "Callable[[Memorization | Memorization2], None]"
 
 @dataclass
 class PinPalApp:
-    memorizations: list[Memorization2 | Memorization]
+    _memorizations: list[Memorization2 | Memorization]
     keyringServiceName: str
     backend: KeyringBackend
+    _memChangeCB: MemChange = field(default=lambda me: None)
+
+    @property
+    def memorizations(self) -> Sequence[Memorization2 | Memorization]:
+        return self._memorizations
+
+    def whenMemorizationChanges(self, changeCallback: MemChange) -> None:
+        """
+        Call the given callback when any memorization changes, passing it in to
+        said callback.
+        """
+        self._memChangeCB = changeCallback
+        for memorization in self.memorizations:
+            memorization.whenMemorizationChanges(changeCallback)
+
+    def addMemorization(self, memorization: Memorization2 | Memorization) -> None:
+        self._memorizations.append(memorization)
+        memorization.whenMemorizationChanges(self._memChangeCB)
+
+    def removeMemorizationAtIndex(self, idx: int) -> None:
+        del self._memorizations[idx]
 
     def save(self) -> None:
         """

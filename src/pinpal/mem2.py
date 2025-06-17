@@ -6,18 +6,18 @@ from dataclasses import dataclass, field
 from enum import Enum
 from secrets import token_bytes
 from time import time as _globalTime
-from typing import Any, Callable, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Sequence
 from uuid import uuid4
 
 from pinpal.uiboundary import UserPrompter
 
-from .difficulty import (
-    SCryptParameters,
-    determineScryptParameters,
-    oldDefaultScryptParams,
-)
+from .difficulty import (SCryptParameters, determineScryptParameters,
+                         oldDefaultScryptParams)
 from .difficulty import sysrand as _sysrand
 from .txtui import promptUser, show
+
+if TYPE_CHECKING:
+    from .app import MemChange
 
 
 @dataclass
@@ -164,6 +164,11 @@ class Memorization2:
     The source of randomness.  Really should only be specified by tests;
     otherwise determinism (i.e. predictability) is deeply undesirable.
     """
+
+    _changeCallback: MemChange = field(default=lambda me: None)
+
+    def whenMemorizationChanges(self, newCallback: MemChange) -> None:
+        self._changeCallback = newCallback
 
     @property
     def done(self) -> bool:
@@ -352,6 +357,7 @@ class Memorization2:
                 correct=correct, timestamp=self._time(), length=self.generatedCount
             )
         )
+        self._changeCallback(self)
         if correct:
             guessesToGo = self.correctThreshold() - self.correctGuessCount()
             if guessesToGo > 0:
