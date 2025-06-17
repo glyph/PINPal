@@ -32,10 +32,13 @@ from quickmacapp import (
 from quickmacapp.notifications import configureNotifications, response, Notifier
 from twisted.internet.defer import Deferred
 from twisted.internet.interfaces import IReactorTime
+from twisted.logger import Logger
 
 from .app import DEFAULT_SERVICE_NAME, PinPalApp
 from .mem1 import Memorization
 from .mem2 import Memorization2
+
+log = Logger()
 
 
 class MacUserPrompter:
@@ -164,7 +167,7 @@ class PINPalAppOwner(NSObject):
     sparkleUpdaterController = IBOutlet()
 
     memoDataSource: MemorizationDataSource = object_property()
-    notifier: Notifier[TimeToRehearse]
+    notifier: Notifier[TimeToRehearse] = object_property()
 
     def initWithApp_(self, pinPalApp: PinPalApp) -> PINPalAppOwner:
         self.pinPalApp = pinPalApp
@@ -176,32 +179,37 @@ class PINPalAppOwner(NSObject):
         """
         Update the OS user notification state for a single memorization.
         """
-        when = aware(
-            datetime.fromtimestamp(memorization.nextPromptTime(), zone), ZoneInfo
-        )
-        if when > now:
-            self.notifier.undeliver(TimeToRehearse(memorization, self.memoDataSource))
-            NSLog(
-                "Scheduling <%@> reminder notification at <%@>",
-                memorization.label,
-                str(when),
+        try:
+            when = aware(
+                datetime.fromtimestamp(memorization.nextPromptTime(), zone), ZoneInfo
             )
-            await self.notifier.notifyAt(
-                when,
-                TimeToRehearse(memorization, self.memoDataSource),
-                f"Time To Rehearse “{memorization.label}”",
-                "Blah blah blah",
-            )
-        else:
-            NSLog(
-                "Not touching <%@> reminder notification from the past at <%@>",
-                memorization.label,
-                when,
-            )
+            if when > now:
+                self.notifier.undeliver(
+                    TimeToRehearse(memorization, self.memoDataSource)
+                )
+                NSLog(
+                    "Scheduling <%@> reminder notification at <%@>",
+                    memorization.label,
+                    str(when),
+                )
+                await self.notifier.notifyAt(
+                    when,
+                    TimeToRehearse(memorization, self.memoDataSource),
+                    f"Time To Rehearse “{memorization.label}”",
+                    "Blah blah blah",
+                )
+            else:
+                NSLog(
+                    "Not touching <%@> reminder notification from the past at <%@>",
+                    memorization.label,
+                    when,
+                )
+        except BaseException:
+            log.failure("while updating notification state")
 
     async def doNotificationSetup(self) -> None:
         async with configureNotifications() as n:
-            self.rehearsalNotifier = n.add(
+            self.notifier = n.add(
                 TimeToRehearse,
                 RehearseNotificationTranslator(self.pinPalApp, self.memoDataSource),
             )
