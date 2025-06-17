@@ -49,7 +49,7 @@ def main() -> None:
         if subCommand == "new":
             newLabel = input("What do you want to call this new PIN?")
             m = await Memorization2.new(newLabel, prompter)
-            app.memorizations.append(m)
+            app.addMemorization(m)
 
         elif subCommand == "list":
             for idx, mem in enumerate(app.memorizations):
@@ -61,7 +61,7 @@ def main() -> None:
             dropnum = input("Which number do you want to drop? ")
             dropidx = int(dropnum)
             if (input(f"Dropping {mem.label}, OK?")) == "yes":
-                del app.memorizations[dropidx]
+                app.removeMemorizationAtIndex(dropidx)
                 await prompter.tellUser("OK, dropped.")
 
         else:
