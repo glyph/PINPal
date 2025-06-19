@@ -18,7 +18,7 @@ dependencies = [
   "twisted",
 ]
 
-version = "2025.6.4"
+version = "2025.6.18"
 
 [project.urls]
 Home = "https://github.com/glyph/pinpal/"
