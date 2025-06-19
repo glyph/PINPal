@@ -302,9 +302,11 @@ class RehearseNotificationTranslator:
         return (f"rehearse.{notification.memorization.id}", {})
 
 
-def loadIncludedFramework(frameworkName: str) -> None:
+def loadIncludedFramework(frameworkName: str) -> bool:
     """
     Dynamically load the given framework from the application's bundle.
+
+    @return: True if the framework loaded, False otherwise.
     """
     try:
         loadBundle(
@@ -315,6 +317,9 @@ def loadIncludedFramework(frameworkName: str) -> None:
         )
     except ImportError as ie:
         NSLog("Could not load %@ framework: %@", frameworkName, ie)
+        return False
+    else:
+        return True
 
 
 def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
@@ -323,7 +328,7 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     """
     # Ensure that the Sparkle framework is loaded before nib deserialization,
     # so that the update controller can be instantiated by the nib machinery.
-    loadIncludedFramework("Sparkle")
+    didLoadSparkle = loadIncludedFramework("Sparkle")
     app: PINPalMacApplication = PINPalMacApplication.sharedApplication()
 
     serviceName = (
@@ -395,6 +400,10 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
         ]
     )
     app.statusMenu = status.item.menu()
+    updateItem = app.statusMenu.itemAtIndex_(0)
+    if not didLoadSparkle:
+        updateItem.setTarget_(None)
+        updateItem.setAction_(None)
     toggleItem = app.statusMenu.itemAtIndex_(1)
 
     initial = myAppService.status() == SMAppServiceStatusEnabled
