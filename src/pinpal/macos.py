@@ -374,7 +374,7 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
             SMAppServiceStatusRequiresApproval,
         }
         if nowOn:
-            didUnregister, err = myAppService.registerAndReturnError_(None)
+            didUnregister, err = myAppService.unregisterAndReturnError_(None)
             NSLog(
                 "unregistered from app service launch and got %@ %@", didUnregister, err
             )
