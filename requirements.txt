@@ -61,7 +61,7 @@ more-itertools==10.7.0
     #   -c ./dev-requirements.txt
     #   jaraco-classes
     #   jaraco-functools
-twisted==24.11.0
+twisted==25.5.0
     # via
     #   -c ./dev-requirements.txt
     #   pinpal (pyproject.toml)

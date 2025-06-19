@@ -36,6 +36,7 @@ gui = [
   "pyobjc-framework-ExceptionHandling ; sys_platform == 'darwin'",
   "pyobjc-framework-UserNotifications ; sys_platform == 'darwin'",
   "pyobjc-framework-CFNetwork ; sys_platform == 'darwin'",
+  "pyobjc-framework-ServiceManagement ; sys_platform == 'darwin'",
   "quickmacapp >= 2025.1.21 ; sys_platform == 'darwin'",
   "quickmachotkey ; sys_platform == 'darwin'",
 
@@ -70,6 +71,7 @@ module = [
   "objc",
   "Foundation",
   "AppKit",
+  "ServiceManagement",
   "setuptools",
 ]
 

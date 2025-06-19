@@ -8,6 +8,8 @@ from zoneinfo import ZoneInfo
 from AppKit import (
     NSApplication,
     NSApplicationActivationPolicyRegular,
+    NSControlStateValueOn,
+    NSControlStateValueOff,
     NSEvent,
     NSImage,
     NSMenu,
@@ -16,6 +18,12 @@ from AppKit import (
     NSTableView,
     NSWindow,
 )
+from ServiceManagement import (
+    SMAppService,
+    SMAppServiceStatusEnabled,
+    SMAppServiceStatusRequiresApproval,
+)
+
 from datetype import DateTime, aware
 from Foundation import NSBundle, NSIndexSet, NSLog, NSObject
 from fritter.drivers.datetimes import guessLocalZone
@@ -294,23 +302,28 @@ class RehearseNotificationTranslator:
         return (f"rehearse.{notification.memorization.id}", {})
 
 
+def loadIncludedFramework(frameworkName: str) -> None:
+    """
+    Dynamically load the given framework from the application's bundle.
+    """
+    try:
+        loadBundle(
+            frameworkName,
+            {},
+            bundle_path=NSBundle.mainBundle().privateFrameworksPath()
+            + f"/{frameworkName}.framework",
+        )
+    except ImportError as ie:
+        NSLog("Could not load %@ framework: %@", frameworkName, ie)
+
+
 def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     """
     Run main() normally, but if in a test-mode build, run testMain instead.
     """
-
     # Ensure that the Sparkle framework is loaded before nib deserialization,
     # so that the update controller can be instantiated by the nib machinery.
-    try:
-        loadBundle(
-            "Sparkle",
-            {},
-            bundle_path=NSBundle.mainBundle().privateFrameworksPath()
-            + "/Sparkle.framework",
-        )
-    except ImportError as ie:
-        NSLog("Could not load Sparkle framework: %@", ie)
-
+    loadIncludedFramework("Sparkle")
     app: PINPalMacApplication = PINPalMacApplication.sharedApplication()
 
     serviceName = (
@@ -353,15 +366,41 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     def checkForUpdates() -> None:
         owner.sparkleUpdaterController.checkForUpdates_(app)
 
+    myAppService = SMAppService.mainAppService()
+
+    def toggleState() -> None:
+        nowOn = myAppService.status() in {
+            SMAppServiceStatusEnabled,
+            SMAppServiceStatusRequiresApproval,
+        }
+        if nowOn:
+            didUnregister, err = myAppService.registerAndReturnError_(None)
+            NSLog(
+                "unregistered from app service launch and got %@ %@", didUnregister, err
+            )
+            nowOn = not didUnregister
+        else:
+            didRegister, err = myAppService.registerAndReturnError_(None)
+            NSLog("registered for app service launch and got %@ %@", didRegister, err)
+            nowOn = didRegister
+        toggleItem.setState_(NSControlStateValueOn if nowOn else NSControlStateValueOff)
+
     createMainWindow()
     status.menu(
         [
             # ("Hello World", sayHello),
             ("Check for updates…", checkForUpdates),
+            ("Launch on Login", toggleState),
             ("Quit", bye),
         ]
     )
     app.statusMenu = status.item.menu()
+    toggleItem = app.statusMenu.itemAtIndex_(1)
+
+    initial = myAppService.status() == SMAppServiceStatusEnabled
+    NSLog("initial menu toggle set to %@", initial)
+    if initial:
+        toggleItem.setState_(NSControlStateValueOn)
 
     Deferred.fromCoroutine(owner.doNotificationSetup())
 

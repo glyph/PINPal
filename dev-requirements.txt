@@ -55,7 +55,7 @@ more-itertools==10.7.0
     # via
     #   jaraco-classes
     #   jaraco-functools
-mypy==1.16.0
+mypy==1.16.1
     # via
     #   mypy-zope
     #   pinpal (pyproject.toml)
@@ -80,7 +80,7 @@ pyproject-hooks==1.2.0
     # via
     #   build
     #   pip-tools
-twisted==24.11.0
+twisted==25.5.0
     # via
     #   encrust
     #   pinpal (pyproject.toml)
