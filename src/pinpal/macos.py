@@ -83,10 +83,7 @@ class MemorizationDataSource(NSObject):
             self.selectedRow = it
             self.selectedMemorization = it["memorization"]
 
-    def numberOfRowsInTableView_(
-        self,
-        tableView: NSTableView,
-    ) -> int:
+    def numberOfRowsInTableView_(self, tableView: NSTableView) -> int:
         return len(self.pinPalApp.memorizations)
 
     def tableView_objectValueForTableColumn_row_(
@@ -203,8 +200,8 @@ class PINPalAppOwner(NSObject):
                 await self.notifier.notifyAt(
                     when,
                     TimeToRehearse(memorization, self.memoDataSource),
-                    f"Time To Rehearse “{memorization.label}”",
-                    "Blah blah blah",
+                    "PINPal Rehearsal Time",
+                    f"Continue memorizing “{memorization.label}”.",
                 )
             else:
                 NSLog(
@@ -322,6 +319,20 @@ def loadIncludedFramework(frameworkName: str) -> bool:
         return True
 
 
+def createMainWindow(owner: PINPalAppOwner, app: PINPalMacApplication) -> None:
+    """
+    Create the main window once we have already initialized the owner and the
+    shared application.
+    """
+    nibInstance = NSNib.alloc().initWithNibNamed_bundle_("PINList.nib", None)
+    nibInstance.instantiateWithOwner_topLevelObjects_(owner, None)
+    dockIconWhenVisible(owner.mainWindow, hideIconOnOtherSpaces=False)
+    owner.mainWindow.makeMainWindow()
+    owner.mainWindow.makeKeyWindow()
+    app.setActivationPolicy_(NSApplicationActivationPolicyRegular)
+    app.activate()
+
+
 def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     """
     Run main() normally, but if in a test-mode build, run testMain instead.
@@ -330,48 +341,29 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     # so that the update controller can be instantiated by the nib machinery.
     didLoadSparkle = loadIncludedFramework("Sparkle")
     app: PINPalMacApplication = PINPalMacApplication.sharedApplication()
-
+    myAppService = SMAppService.mainAppService()
     serviceName = (
         DEFAULT_SERVICE_NAME if not testMode else f"testing.{DEFAULT_SERVICE_NAME}"
     )
-
     loaded = PinPalApp.load(serviceName)
-
     if loaded is None:
         loaded = PinPalApp.new(serviceName)
-
     owner: PINPalAppOwner = PINPalAppOwner.alloc().initWithApp_(loaded)
-
     app.mainMenu = (
         NSNib.alloc()
         .initWithNibNamed_bundle_("MainMenu.nib", None)
         .instantiateWithOwner_topLevelObjects_(owner, None)
     )
-
-    statusicon = NSImage.imageNamed_("statusicon.png")
+    (statusicon := NSImage.imageNamed_("statusicon.png")).setTemplate_(True)
     # a 'template' icon is one that is abstract black-only line-art that can
     # adapt to dark/light mode
-    statusicon.setTemplate_(True)
     status = Status(image=statusicon)
-
-    def createMainWindow() -> None:
-        # Deferred.fromCoroutine(answer("hi"))
-        nibInstance = NSNib.alloc().initWithNibNamed_bundle_("PINList.nib", None)
-        nibInstance.instantiateWithOwner_topLevelObjects_(owner, None)
-        dockIconWhenVisible(owner.mainWindow, hideIconOnOtherSpaces=False)
-        owner.mainWindow.makeMainWindow()
-        owner.mainWindow.makeKeyWindow()
-        app = NSApplication.sharedApplication()
-        app.setActivationPolicy_(NSApplicationActivationPolicyRegular)
-        app.activate()
 
     def bye() -> None:
         app.terminate_(owner)
 
     def checkForUpdates() -> None:
         owner.sparkleUpdaterController.checkForUpdates_(app)
-
-    myAppService = SMAppService.mainAppService()
 
     def toggleLaunchOnLogin() -> None:
         nowOn = myAppService.status() in {
@@ -380,17 +372,15 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
         }
         if nowOn:
             didUnregister, err = myAppService.unregisterAndReturnError_(None)
-            NSLog(
-                "unregistered from app service launch and got %@ %@", didUnregister, err
-            )
+            NSLog("unregistered app service launch; got %@ %@", didUnregister, err)
             nowOn = not didUnregister
         else:
             didRegister, err = myAppService.registerAndReturnError_(None)
-            NSLog("registered for app service launch and got %@ %@", didRegister, err)
+            NSLog("registered app service launch; got %@ %@", didRegister, err)
             nowOn = didRegister
         toggleItem.setState_(NSControlStateValueOn if nowOn else NSControlStateValueOff)
 
-    createMainWindow()
+    createMainWindow(owner, app)
     status.menu(
         [
             # ("Hello World", sayHello),
@@ -399,19 +389,16 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
             ("Quit", bye),
         ]
     )
-
     app.statusMenu = status.item.menu()
     updateItem = app.statusMenu.itemAtIndex_(0)
     toggleItem = app.statusMenu.itemAtIndex_(1)
     if not didLoadSparkle:
         updateItem.setTarget_(None)
         updateItem.setAction_(None)
-
     initial = myAppService.status() == SMAppServiceStatusEnabled
     NSLog("initial menu toggle set to %@", initial)
     if initial:
         toggleItem.setState_(NSControlStateValueOn)
-
     Deferred.fromCoroutine(owner.doNotificationSetup())
 
 
