@@ -373,7 +373,7 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
 
     myAppService = SMAppService.mainAppService()
 
-    def toggleState() -> None:
+    def toggleLaunchOnLogin() -> None:
         nowOn = myAppService.status() in {
             SMAppServiceStatusEnabled,
             SMAppServiceStatusRequiresApproval,
@@ -395,16 +395,17 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
         [
             # ("Hello World", sayHello),
             ("Check for updates…", checkForUpdates),
-            ("Launch on Login", toggleState),
+            ("Launch on Login", toggleLaunchOnLogin),
             ("Quit", bye),
         ]
     )
+
     app.statusMenu = status.item.menu()
     updateItem = app.statusMenu.itemAtIndex_(0)
+    toggleItem = app.statusMenu.itemAtIndex_(1)
     if not didLoadSparkle:
         updateItem.setTarget_(None)
         updateItem.setAction_(None)
-    toggleItem = app.statusMenu.itemAtIndex_(1)
 
     initial = myAppService.status() == SMAppServiceStatusEnabled
     NSLog("initial menu toggle set to %@", initial)
