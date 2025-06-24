@@ -41,7 +41,7 @@ jaraco-classes==3.4.0
     # via keyring
 jaraco-context==6.0.1
     # via keyring
-jaraco-functools==4.2.0
+jaraco-functools==4.2.1
     # via keyring
 keyring==25.6.0
     # via pinpal (pyproject.toml)
@@ -112,11 +112,10 @@ zope-schema==7.0.1
 # The following packages are considered to be unsafe in a requirements file:
 pip==25.1.1
     # via pip-tools
-setuptools==70.3.0
+setuptools==80.9.0
     # via
     #   incremental
     #   modulegraph
-    #   pinpal (pyproject.toml)
     #   pip-tools
     #   zope-event
     #   zope-interface

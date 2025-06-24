@@ -48,7 +48,7 @@ jaraco-context==6.0.1
     # via
     #   -c ./dev-requirements.txt
     #   keyring
-jaraco-functools==4.2.0
+jaraco-functools==4.2.1
     # via
     #   -c ./dev-requirements.txt
     #   keyring
@@ -79,7 +79,7 @@ zope-interface==7.2
     #   twisted
 
 # The following packages are considered to be unsafe in a requirements file:
-setuptools==70.3.0
+setuptools==80.9.0
     # via
     #   -c ./dev-requirements.txt
     #   incremental
