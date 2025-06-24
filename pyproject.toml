@@ -55,10 +55,6 @@ dev = [
   "pygobject-stubs",
   "types-python-xlib",
   "encrust ; sys_platform == 'darwin'",
-
-  # workaround for https://github.com/ronaldoussoren/py2app/issues/531 ; drop
-  # when we can
-  "setuptools<71.0.0",
 ]
 
 [tool.mypy]
