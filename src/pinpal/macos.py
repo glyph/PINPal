@@ -30,6 +30,7 @@ from fritter.drivers.datetimes import guessLocalZone
 from objc import IBAction, IBOutlet, loadBundle, object_property, super
 from quickmacapp import (
     Status,
+    ItemState,
     answer,
     ask,
     choose,
@@ -365,7 +366,7 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
     def checkForUpdates() -> None:
         owner.sparkleUpdaterController.checkForUpdates_(app)
 
-    def toggleLaunchOnLogin() -> None:
+    def toggleLaunchOnLogin() -> ItemState:
         nowOn = myAppService.status() in {
             SMAppServiceStatusEnabled,
             SMAppServiceStatusRequiresApproval,
@@ -378,27 +379,28 @@ def maybeTestMain(reactor: IReactorTime, testMode: bool) -> None:
             didRegister, err = myAppService.registerAndReturnError_(None)
             NSLog("registered app service launch; got %@ %@", didRegister, err)
             nowOn = didRegister
-        toggleItem.setState_(NSControlStateValueOn if nowOn else NSControlStateValueOff)
+        return ItemState(checked=nowOn)
 
     createMainWindow(owner, app)
     status.menu(
         [
             # ("Hello World", sayHello),
-            ("Check for updates…", checkForUpdates),
-            ("Launch on Login", toggleLaunchOnLogin),
+            (
+                "Check for updates…",
+                checkForUpdates,
+                ItemState(enabled=didLoadSparkle, key=""),
+            ),
+            (
+                "Launch on Login",
+                toggleLaunchOnLogin,
+                ItemState(
+                    checked=myAppService.status() == SMAppServiceStatusEnabled, key=""
+                ),
+            ),
             ("Quit", bye),
         ]
     )
     app.statusMenu = status.item.menu()
-    updateItem = app.statusMenu.itemAtIndex_(0)
-    toggleItem = app.statusMenu.itemAtIndex_(1)
-    if not didLoadSparkle:
-        updateItem.setTarget_(None)
-        updateItem.setAction_(None)
-    initial = myAppService.status() == SMAppServiceStatusEnabled
-    NSLog("initial menu toggle set to %@", initial)
-    if initial:
-        toggleItem.setState_(NSControlStateValueOn)
     Deferred.fromCoroutine(owner.doNotificationSetup())
 
 
