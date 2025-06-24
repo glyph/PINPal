@@ -83,7 +83,7 @@ hyperlink==21.0.0
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   twisted
-hypothesis==6.135.11
+hypothesis==6.135.14
     # via twisted
 idna==3.10
     # via
@@ -108,7 +108,7 @@ jaraco-context==6.0.1
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   keyring
-jaraco-functools==4.1.0
+jaraco-functools==4.2.1
     # via
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
@@ -189,7 +189,7 @@ pyopenssl==25.1.0
     # via twisted
 pyserial==3.5
     # via twisted
-quickmacapp==2025.4.15 ; sys_platform == "darwin"
+quickmacapp==2025.6.24 ; sys_platform == "darwin"
     # via pinpal (pyproject.toml)
 quickmachotkey==2023.11.17 ; sys_platform == "darwin"
     # via pinpal (pyproject.toml)
