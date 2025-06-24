@@ -48,7 +48,7 @@ jaraco-context==6.0.1
     # via
     #   -c ./dev-requirements.txt
     #   keyring
-jaraco-functools==4.2.1
+jaraco-functools==4.1.0
     # via
     #   -c ./dev-requirements.txt
     #   keyring
