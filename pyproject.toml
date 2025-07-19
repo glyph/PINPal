@@ -39,6 +39,7 @@ gui = [
   "pyobjc-framework-ServiceManagement ; sys_platform == 'darwin'",
   "quickmacapp >= 2025.1.21 ; sys_platform == 'darwin'",
   "quickmachotkey ; sys_platform == 'darwin'",
+  "pillow",
 
   "ewmh ; sys_platform == 'linux'",
   "pycairo ; sys_platform == 'linux'",

@@ -5,6 +5,8 @@ from datetime import datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
+from PIL import Image
+
 from AppKit import (
     NSApplication,
     NSApplicationActivationPolicyRegular,
