@@ -123,13 +123,15 @@ class MemorizationDataSource(NSObject):
 
         async def _() -> None:
             self.pinPalApp.addMemorization(
-                await Memorization2.new(
+                it := await Memorization2.new(
                     await ask("What is the label for your new memorization?"),
                     macPrompter,
                 )
             )
             self.tableView.reloadData()
             self.pinPalApp.save()
+            now = aware(datetime.now(zone), ZoneInfo)
+            await self.appOwner.notifyForOneMemo(now, it)
 
         Deferred.fromCoroutine(_())
 
@@ -149,6 +151,7 @@ class MemorizationDataSource(NSObject):
                     self.pinPalApp.memorizations.index(mem)
                 )
                 self.tableView.reloadData()
+                self.appOwner.notifier.undeliver(TimeToRehearse(mem, self))
 
         Deferred.fromCoroutine(_())
 
