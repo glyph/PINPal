@@ -8,8 +8,6 @@ from zoneinfo import ZoneInfo
 from AppKit import (
     NSApplication,
     NSApplicationActivationPolicyRegular,
-    NSControlStateValueOn,
-    NSControlStateValueOff,
     NSEvent,
     NSImage,
     NSMenu,
