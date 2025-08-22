@@ -105,6 +105,14 @@ class MemorizationDataSource(NSObject):
             "memorization": item,
         }
 
+    def _changedSomeData(self) -> None:
+        """
+        I changed the list.  Save the app's storage, reload the UI view in the
+        table.
+        """
+        self.pinPalApp.save()
+        self.tableView.reloadData()
+
     @IBAction
     def rehearsal_(self, sender: NSObject) -> None:
         macPrompter = MacUserPrompter()
@@ -112,8 +120,7 @@ class MemorizationDataSource(NSObject):
         async def rehearse() -> None:
             for mem in self.pinPalApp.memorizations:
                 await mem.prompt(macPrompter)
-            self.pinPalApp.save()
-            self.tableView.reloadData()
+            self._changedSomeData()
 
         Deferred.fromCoroutine(rehearse())
 
@@ -128,8 +135,7 @@ class MemorizationDataSource(NSObject):
                     macPrompter,
                 )
             )
-            self.tableView.reloadData()
-            self.pinPalApp.save()
+            self._changedSomeData()
             now = aware(datetime.now(zone), ZoneInfo)
             await self.appOwner.notifyForOneMemo(now, it)
 
@@ -150,7 +156,7 @@ class MemorizationDataSource(NSObject):
                 self.pinPalApp.removeMemorizationAtIndex(
                     self.pinPalApp.memorizations.index(mem)
                 )
-                self.tableView.reloadData()
+                self._changedSomeData()
                 self.appOwner.notifier.undeliver(TimeToRehearse(mem, self))
 
         Deferred.fromCoroutine(_())
