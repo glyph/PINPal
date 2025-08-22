@@ -10,7 +10,7 @@ altgraph==0.17.4
     #   macholib
     #   modulegraph
     #   py2app
-anyio==4.9.0
+anyio==4.10.0
     # via httpx
 appdirs==1.4.4
     # via twisted
@@ -28,7 +28,7 @@ automat==25.4.16
     #   twisted
 bcrypt==4.3.0
     # via twisted
-certifi==2025.6.15
+certifi==2025.8.3
     # via
     #   httpcore
     #   httpx
@@ -39,7 +39,7 @@ constantly==23.10.4
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   twisted
-cryptography==45.0.4
+cryptography==45.0.6
     # via
     #   pyopenssl
     #   service-identity
@@ -83,7 +83,7 @@ hyperlink==21.0.0
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   twisted
-hypothesis==6.135.14
+hypothesis==6.138.2
     # via twisted
 idna==3.10
     # via
@@ -108,7 +108,7 @@ jaraco-context==6.0.1
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
     #   keyring
-jaraco-functools==4.2.1
+jaraco-functools==4.3.0
     # via
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt
@@ -174,6 +174,7 @@ pyobjc-framework-cocoa==11.1 ; sys_platform == "darwin"
     #   pyobjc-framework-servicemanagement
     #   pyobjc-framework-usernotifications
     #   quickmacapp
+    #   quickmachotkey
     #   twisted
 pyobjc-framework-exceptionhandling==11.1 ; sys_platform == "darwin"
     # via
@@ -189,9 +190,9 @@ pyopenssl==25.1.0
     # via twisted
 pyserial==3.5
     # via twisted
-quickmacapp==2025.6.24 ; sys_platform == "darwin"
+quickmacapp==2025.7.22 ; sys_platform == "darwin"
     # via pinpal (pyproject.toml)
-quickmachotkey==2023.11.17 ; sys_platform == "darwin"
+quickmachotkey==2025.7.28 ; sys_platform == "darwin"
     # via pinpal (pyproject.toml)
 service-identity==24.2.0
     # via twisted
@@ -205,7 +206,7 @@ twisted==25.5.0
     #   -c ./requirements.txt
     #   pinpal (pyproject.toml)
     #   quickmacapp
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via
     #   -c ./dev-requirements.txt
     #   -c ./requirements.txt

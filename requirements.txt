@@ -48,7 +48,7 @@ jaraco-context==6.0.1
     # via
     #   -c ./dev-requirements.txt
     #   keyring
-jaraco-functools==4.2.1
+jaraco-functools==4.3.0
     # via
     #   -c ./dev-requirements.txt
     #   keyring
@@ -65,7 +65,7 @@ twisted==25.5.0
     # via
     #   -c ./dev-requirements.txt
     #   pinpal (pyproject.toml)
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via
     #   -c ./dev-requirements.txt
     #   twisted
