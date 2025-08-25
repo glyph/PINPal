@@ -119,9 +119,10 @@ class MemorizationDataSource(NSObject):
         macPrompter = MacUserPrompter()
 
         async def rehearse() -> None:
-            await choice(
-                [mem for mem in self.pinPalApp.memorizations if mem.readyForRehearsal()]
-            ).prompt(macPrompter)
+            seq = [mem for mem in self.pinPalApp.memorizations if mem.readyForRehearsal()]
+            if not seq:
+                await macPrompter.tellUser("Nothing ready to rehearse.")
+            await choice(seq).prompt(macPrompter)
             self._changedSomeData()
 
         Deferred.fromCoroutine(rehearse())
