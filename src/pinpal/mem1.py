@@ -121,6 +121,9 @@ class Memorization:
         )
         return self.separator.join(allTokens)
 
+    def readyForRehearsal(self) -> bool:
+        return (time() >= self.nextPromptTime())
+
     async def prompt(self, prompter: UserPrompter) -> bool:
         correct = await promptUser(
             prompter,

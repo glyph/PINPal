@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 from zoneinfo import ZoneInfo
+from random import choice
 
 from AppKit import (
     NSApplication,
@@ -118,8 +119,9 @@ class MemorizationDataSource(NSObject):
         macPrompter = MacUserPrompter()
 
         async def rehearse() -> None:
-            for mem in self.pinPalApp.memorizations:
-                await mem.prompt(macPrompter)
+            await choice(
+                [mem for mem in self.pinPalApp.memorizations if mem.readyForRehearsal()]
+            ).prompt(macPrompter)
             self._changedSomeData()
 
         Deferred.fromCoroutine(rehearse())

@@ -335,6 +335,9 @@ class Memorization2:
             salt=self.salt, password=wholePassphrase.encode("utf-8")
         )
 
+    def readyForRehearsal(self) -> bool:
+        return (self._time() >= self.nextPromptTime())
+
     async def prompt(self, prompter: UserPrompter) -> bool:
         correct = await promptUser(
             prompter,

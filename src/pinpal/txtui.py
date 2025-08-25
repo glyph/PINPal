@@ -60,9 +60,6 @@ async def promptUser(
 ) -> bool | None:
     remaining = nextTime - time()
     if remaining > 0:
-        await prompter.tellUser(
-            f"next reminder for {label} in {int(remaining)} seconds"
-        )
         return None
     attempt = ""
     for repetition in range(attempts):
