@@ -12,12 +12,17 @@ from keyring.backend import KeyringBackend
 from .mem1 import Memorization
 from .mem2 import Memorization2
 
-timecache = expanduser("~/.pinpal-timestamp")
-
 DEFAULT_SERVICE_NAME = environ.get("PINPAL_KEYRING", "pinpal")
-DEFAULT_KEYRING = get_keyring()
 
 MemChange: TypeAlias = "Callable[[Memorization | Memorization2], None]"
+
+
+def timeCacheName(keyringService: str = DEFAULT_SERVICE_NAME) -> str:
+    """
+    Compute the time-cache filename.
+    """
+    return expanduser(f"~/.{keyringService}-timestamp")
+
 
 @dataclass
 class PinPalApp:
@@ -50,6 +55,7 @@ class PinPalApp:
         """
         Write it all out to somewhere persistent.
         """
+        timecache = timeCacheName(self.keyringServiceName)
         with open(timecache, "w") as f:
             f.write(
                 str(
@@ -66,20 +72,21 @@ class PinPalApp:
 
     @classmethod
     def new(
-        cls, keyringServiceName: str = DEFAULT_SERVICE_NAME, backend=DEFAULT_KEYRING
+        cls, keyringServiceName: str = DEFAULT_SERVICE_NAME, backendFactory=get_keyring
     ) -> PinPalApp:
         """
         Construct a new, blank PinPalApp
         """
-        return cls([], keyringServiceName, backend)
+        return cls([], keyringServiceName, backendFactory())
 
     @classmethod
     def load(
-        cls, keyringServiceName: str = DEFAULT_SERVICE_NAME, backend=DEFAULT_KEYRING
+        cls, keyringServiceName: str = DEFAULT_SERVICE_NAME, backendFactory=get_keyring
     ) -> PinPalApp | None:
         """
         Load it from somewhere persistent.
         """
+        backend = backendFactory()
         stored = backend.get_password(keyringServiceName, "storage")
         if stored is None:
             return None

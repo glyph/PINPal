@@ -3,7 +3,7 @@ from time import time
 
 from twisted.internet.defer import Deferred
 
-from .app import PinPalApp, loadSomeMemorization, timecache
+from .app import PinPalApp, loadSomeMemorization, timeCacheName
 from .mem1 import Memorization
 from .mem2 import Memorization2
 from .txtui import TerminalUserPrompter
@@ -25,6 +25,7 @@ def main() -> None:
     from sys import argv, exit, stdout
 
     if len(argv) > 1 and argv[1] == "check":
+        timecache = timeCacheName()
         if exists(timecache):
             with open(timecache) as f:
                 needsCheckAt = float(f.read())
