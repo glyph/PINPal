@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from secrets import token_bytes
+from unicodedata import normalize
 from time import time
 from typing import TYPE_CHECKING, Any, Sequence
 from uuid import uuid4
@@ -95,7 +96,7 @@ class Memorization:
         remainingTokens = [sysrand.choice(tokens) for _ in range(length)]
         salt = token_bytes(16)
         kdf = determineScryptParameters()
-        password = separator.join(remainingTokens).encode("utf-8")
+        password = normalize("NFC", separator.join(remainingTokens)).encode("utf-8")
         key = kdf.kdf(salt=salt, password=password)
         return Memorization(
             label=label,
