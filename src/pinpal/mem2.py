@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 from secrets import token_bytes
+from unicodedata import normalize
 from time import time as _globalTime
 from typing import TYPE_CHECKING, Any, Callable, Sequence
 from uuid import uuid4
@@ -312,7 +313,7 @@ class Memorization2:
             oldTokenMismatch = (
                 self.kdf.kdf(
                     salt=self.salt,
-                    password=self.tokenType.value.separator.join(tokens[:-1]).encode(
+                    password=normalize("NFC", self.tokenType.value.separator.join(tokens[:-1])).encode(
                         "utf-8"
                     ),
                 )
@@ -332,7 +333,7 @@ class Memorization2:
             self.knownTokens.pop(0)
         self.salt = token_bytes(16)
         self.key = self.kdf.kdf(
-            salt=self.salt, password=wholePassphrase.encode("utf-8")
+            salt=self.salt, password=normalize("NFC", wholePassphrase).encode("utf-8")
         )
 
     def readyForRehearsal(self) -> bool:
