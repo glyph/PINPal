@@ -1,5 +1,6 @@
 # -*- test-case-name: pinpal.test.test_txtui -*-
 from getpass import getpass
+from unicodedata import normalize
 from time import time
 
 from .uiboundary import UserPrompter
@@ -75,6 +76,6 @@ async def promptUser(
         if userInput is None:
             return False
         attempt = f"\n(attempt {repetition + 2}/{attempts})"
-        if kdf.kdf(salt=salt, password=userInput.encode("utf-8")) == key:
+        if kdf.kdf(salt=salt, password=normalize("NFC", userInput).encode("utf-8")) == key:
             return True
     return False
