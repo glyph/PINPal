@@ -56,3 +56,8 @@ pinpal check
 
 to something that is run frequently. I have it in my shell prompt.  This will
 tell you when you need to run `pinpal`.
+
+## AI Policy
+
+This repository follows the [Twisted AI
+Policy](https://docs.twisted.org/en/latest/development/ai-policy.html).
